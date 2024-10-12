@@ -1,10 +1,24 @@
-import re
+# Requirements file
+touch requirements.txt
+echo pdfminer.six > requirements.txtimport re
 import logging
+import os
+import subprocess
 from pdfminer.high_level import extract_text
 from collections import defaultdict
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Install required packages automatically if not already installed
+def install_requirements():
+    try:
+        logging.info("Installing required packages from requirements.txt...")
+        subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
+        logging.info("Finished installing required packages.")
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Failed to install required packages: {e}")
+        exit(1)
 
 # Step 1: Extract text from PDF
 def extract_text_from_pdf(pdf_path):
@@ -147,5 +161,6 @@ def main(pdf_path):
 
 # Run the script
 if __name__ == "__main__":
+    install_requirements()  # Install the required packages before running the script
     pdf_path = "pdf_files_to_parse/sample_contract.pdf"  # Replace with the path to your PDF file
     main(pdf_path)
