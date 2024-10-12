@@ -2,34 +2,24 @@ import logging
 import os
 import subprocess
 import re
-import fitz  # PyMuPDF uses 'fitz' as its module name
+import fitz  # Import fitz from PyMuPDF
 from collections import defaultdict
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Install required packages automatically if not already installed
-def install_requirements():
-    try:
-        logging.info("Installing required packages from requirements.txt...")
-        # Use subprocess to install the required packages
-        subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
-        logging.info("Finished installing required packages.")
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Failed to install required packages: {e}")
-        exit(1)
-
 # Step 1: Extract text from PDF using PyMuPDF
+
 def extract_text_from_pdf(pdf_path):
     try:
         logging.info(f"Extracting text from PDF file: {pdf_path}")
         # Open the PDF file using PyMuPDF
-        with fitz.open(pdf_path) as doc:
+        with fitz.Document(pdf_path) as doc:
             text = ""
             # Iterate through all pages and extract text
             for page_num in range(len(doc)):
                 logging.info(f"Extracting text from page {page_num + 1}")
-                text += doc.load_page(page_num).get_text()
+                text += doc.load_page(page_num).get_text("text")
         logging.info("Finished extracting text from PDF")
         return text
     except FileNotFoundError:
@@ -193,5 +183,4 @@ def main():
 
 # Run the script
 if __name__ == "__main__":
-    install_requirements()  # Install the required packages before running the script
     main()
