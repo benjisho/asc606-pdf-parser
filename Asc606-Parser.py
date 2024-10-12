@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 import re
-import fitz  # PyMuPDF
+import fitz  # PyMuPDF uses 'fitz' as its module name
 from collections import defaultdict
 
 # Configure logging
