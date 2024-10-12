@@ -45,7 +45,6 @@ def identify_contract(text):
     ]
     # Extract matching sections from the text
     result = extract_section(text, patterns, "Identify Contract")
-    logging.info(f"Result for contract identification: {result}")
     return result
 
 def identify_performance_obligations(text):
@@ -57,7 +56,6 @@ def identify_performance_obligations(text):
     ]
     # Extract matching sections from the text
     result = extract_section(text, patterns, "Identify Performance Obligations")
-    logging.info(f"Result for performance obligations: {result}")
     return result
 
 def determine_transaction_price(text):
@@ -69,7 +67,6 @@ def determine_transaction_price(text):
     ]
     # Extract matching sections from the text
     result = extract_section(text, patterns, "Determine Transaction Price")
-    logging.info(f"Result for transaction price determination: {result}")
     return result
 
 def allocate_transaction_price(text):
@@ -81,7 +78,6 @@ def allocate_transaction_price(text):
     ]
     # Extract matching sections from the text
     result = extract_section(text, patterns, "Allocate Transaction Price")
-    logging.info(f"Result for transaction price allocation: {result}")
     return result
 
 def recognize_revenue(text):
@@ -93,31 +89,22 @@ def recognize_revenue(text):
     ]
     # Extract matching sections from the text
     result = extract_section(text, patterns, "Recognize Revenue")
-    logging.info(f"Result for revenue recognition: {result}")
     return result
 
 # Step 3: Extract sections based on patterns
 def extract_section(text, patterns, step_name):
-    logging.info(f"Extracting section for step: {step_name}")
     all_matches = []
     for pattern in patterns:
-        logging.info(f"Searching with pattern: {pattern}")
         # Use regex to find all matches for the given pattern
         matches = list(re.finditer(pattern, text, re.IGNORECASE))
-        if matches:
-            logging.info(f"Matches found with pattern '{pattern}': {[match.group() for match in matches]}")
         all_matches.extend(match.group() for match in matches)
     if all_matches:
-        # Log and return all matched text with the step name
-        logging.info(f"All matches found for step '{step_name}': {all_matches}")
+        # Return all matched text with the step name
         return f"{step_name}: {'; '.join(all_matches)}"
-    # Log a warning if no matches are found
-    logging.warning(f"No matches found for step: {step_name}")
     return None  # Return None if no match is found
 
 # Step 4: Parse and summarize ASC 606 steps
 def summarize_asc606_steps(text):
-    logging.info("Summarizing ASC 606 steps...")
     summary = []
     # Define the steps and their descriptions
     steps = [
@@ -129,15 +116,11 @@ def summarize_asc606_steps(text):
     ]
     # Iterate through each step and generate the summary
     for step, description in steps:
-        logging.info(f"Processing step: {description}")
         result = step(text)
         if result:
-            logging.info(f"Step result: {result}")
             summary.append(result)
         else:
-            logging.warning(f"No information found for step: {description}")
             summary.append(f"{description}: Not Found")
-    logging.info("Finished summarizing ASC 606 steps")
     return "\n".join(summary)  # Join all steps into a single summary string
 
 # Main function
@@ -169,16 +152,8 @@ def main():
                 continue
             # Clean and preprocess the extracted text
             text = re.sub(r'\s+', ' ', text).strip()  # Remove extra whitespace and special characters
-            logging.info("Extracted text:")
-            # Log the extracted text, truncating if it's too long
-            if len(text) > 500:
-                logging.info(f"Extracted text (truncated): {text[:500]}...")
-            else:
-                logging.info(f"Extracted text: {text}")
             # Summarize the ASC 606 steps based on the extracted text
             summary = summarize_asc606_steps(text)
-            logging.info("\nRevenue Recognition Summary:\n")
-            logging.info(summary)  # Log the summarized revenue recognition steps
             # Write the summary to a text file
             with open(output_path, 'w', encoding='utf-8') as output_file:
                 output_file.write(summary)
