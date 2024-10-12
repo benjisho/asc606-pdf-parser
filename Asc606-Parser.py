@@ -3,10 +3,17 @@ import os
 import subprocess
 import re
 import pymupdf  # Import pymupdf from PyMuPDF
+import argparse
 from collections import defaultdict
 
+# Parse command line arguments
+parser = argparse.ArgumentParser(description="Process PDF files for ASC 606 analysis.")
+parser.add_argument('--debug', action='store_true', help="Enable debug logging")
+args = parser.parse_args()
+
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging_level = logging.DEBUG if args.debug else logging.INFO
+logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Step 1: Extract text from PDF using PyMuPDF
 
@@ -18,7 +25,7 @@ def extract_text_from_pdf(pdf_path):
             text = ""
             # Iterate through all pages and extract text
             for page_num in range(len(doc)):
-                logging.info(f"Extracting text from page {page_num + 1}")
+                logging.debug(f"Extracting text from page {page_num + 1}")
                 text += doc.load_page(page_num).get_text("text")
         logging.info("Finished extracting text from PDF")
         return text
@@ -37,7 +44,7 @@ def extract_text_from_pdf(pdf_path):
 
 # Step 2: Define functions to identify ASC 606 steps
 def identify_contract(text):
-    logging.info("Identifying contract with customer...")
+    logging.debug("Identifying contract with customer...")
     # Define patterns to search for contract-related information
     patterns = [
         r'contract.*?with.*?customer',  # Look for phrases indicating a contract with a customer
@@ -48,7 +55,7 @@ def identify_contract(text):
     return result
 
 def identify_performance_obligations(text):
-    logging.info("Identifying performance obligations...")
+    logging.debug("Identifying performance obligations...")
     # Define patterns to search for performance obligations
     patterns = [
         r'performance obligation.*?(include|consist of)',  # Look for phrases describing performance obligations
@@ -59,7 +66,7 @@ def identify_performance_obligations(text):
     return result
 
 def determine_transaction_price(text):
-    logging.info("Determining transaction price...")
+    logging.debug("Determining transaction price...")
     # Define patterns to search for transaction price information
     patterns = [
         r'transaction price.*?(is|amounts to)',  # Look for phrases specifying the transaction price
@@ -70,7 +77,7 @@ def determine_transaction_price(text):
     return result
 
 def allocate_transaction_price(text):
-    logging.info("Allocating transaction price...")
+    logging.debug("Allocating transaction price...")
     # Define patterns to search for allocation details
     patterns = [
         r'allocate.*?price.*?to.*?obligations',  # Look for phrases about allocating price to obligations
@@ -81,7 +88,7 @@ def allocate_transaction_price(text):
     return result
 
 def recognize_revenue(text):
-    logging.info("Recognizing revenue...")
+    logging.debug("Recognizing revenue...")
     # Define patterns to search for revenue recognition information
     patterns = [
         r'revenue.*?recognition.*?(when|upon)',  # Look for phrases indicating revenue recognition timing
@@ -97,6 +104,8 @@ def extract_section(text, patterns, step_name):
     for pattern in patterns:
         # Use regex to find all matches for the given pattern
         matches = list(re.finditer(pattern, text, re.IGNORECASE))
+        if matches:
+            logging.debug(f"Matches found with pattern '{pattern}': {[match.group() for match in matches]}")
         all_matches.extend(match.group() for match in matches)
     if all_matches:
         # Return all matched text with the step name
