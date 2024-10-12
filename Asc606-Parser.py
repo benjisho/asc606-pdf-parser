@@ -46,7 +46,6 @@ def extract_text_from_pdf(pdf_path):
 
 # Step 2: Define functions to identify ASC 606 steps
 def identify_contract(text):
-    # Identify the contract with a customer in the extracted text
     logging.info("Identifying contract with customer...")
     # Define patterns to search for contract-related information
     patterns = [
@@ -59,7 +58,6 @@ def identify_contract(text):
     return result
 
 def identify_performance_obligations(text):
-    # Identify the performance obligations in the contract
     logging.info("Identifying performance obligations...")
     # Define patterns to search for performance obligations
     patterns = [
@@ -72,7 +70,6 @@ def identify_performance_obligations(text):
     return result
 
 def determine_transaction_price(text):
-    # Determine the transaction price from the contract text
     logging.info("Determining transaction price...")
     # Define patterns to search for transaction price information
     patterns = [
@@ -85,7 +82,6 @@ def determine_transaction_price(text):
     return result
 
 def allocate_transaction_price(text):
-    # Allocate the transaction price to the performance obligations
     logging.info("Allocating transaction price...")
     # Define patterns to search for allocation details
     patterns = [
@@ -98,7 +94,6 @@ def allocate_transaction_price(text):
     return result
 
 def recognize_revenue(text):
-    # Recognize revenue when performance obligations are satisfied
     logging.info("Recognizing revenue...")
     # Define patterns to search for revenue recognition information
     patterns = [
@@ -112,16 +107,18 @@ def recognize_revenue(text):
 
 # Step 3: Extract sections based on patterns
 def extract_section(text, patterns, step_name):
-    # Extract a section of text that matches one of the given patterns
     logging.info(f"Extracting section for step: {step_name}")
     all_matches = []
     for pattern in patterns:
         logging.info(f"Searching with pattern: {pattern}")
         # Use regex to find all matches for the given pattern
-        all_matches.extend(match.group() for match in re.finditer(pattern, text, re.IGNORECASE))
+        matches = list(re.finditer(pattern, text, re.IGNORECASE))
+        if matches:
+            logging.info(f"Matches found with pattern '{pattern}': {[match.group() for match in matches]}")
+        all_matches.extend(match.group() for match in matches)
     if all_matches:
         # Log and return all matched text with the step name
-        logging.info(f"Matches found: {all_matches}")
+        logging.info(f"All matches found for step '{step_name}': {all_matches}")
         return f"{step_name}: {'; '.join(all_matches)}"
     # Log a warning if no matches are found
     logging.warning(f"No matches found for step: {step_name}")
@@ -129,7 +126,6 @@ def extract_section(text, patterns, step_name):
 
 # Step 4: Parse and summarize ASC 606 steps
 def summarize_asc606_steps(text):
-    # Summarize all five steps of the ASC 606 revenue recognition process
     logging.info("Summarizing ASC 606 steps...")
     summary = []
     # Define the steps and their descriptions
@@ -142,10 +138,13 @@ def summarize_asc606_steps(text):
     ]
     # Iterate through each step and generate the summary
     for step, description in steps:
+        logging.info(f"Processing step: {description}")
         result = step(text)
         if result:
+            logging.info(f"Step result: {result}")
             summary.append(result)
         else:
+            logging.warning(f"No information found for step: {description}")
             summary.append(f"{description}: Not Found")
     logging.info("Finished summarizing ASC 606 steps")
     return "\n".join(summary)  # Join all steps into a single summary string
@@ -177,9 +176,9 @@ def main():
             logging.info("Extracted text:")
             # Log the extracted text, truncating if it's too long
             if len(text) > 500:
-                logging.info(text[:500] + "... [truncated]")
+                logging.info(f"Extracted text (truncated): {text[:500]}...")
             else:
-                logging.info(text)
+                logging.info(f"Extracted text: {text}")
             # Summarize the ASC 606 steps based on the extracted text
             summary = summarize_asc606_steps(text)
             logging.info("\nRevenue Recognition Summary:\n")
