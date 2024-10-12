@@ -1,6 +1,3 @@
-# Requirements file
-touch requirements.txt
-echo pdfminer.six > requirements.txtimport re
 import logging
 import os
 import subprocess
