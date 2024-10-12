@@ -144,10 +144,14 @@ def summarize_asc606_steps(text):
 def main():
     # Main function to start the process of extracting and summarizing information from all PDFs in the directory
     pdf_directory = "pdf_files_to_parse"
+    output_directory = "output_files"
     # Check if the directory exists
     if not os.path.exists(pdf_directory):
         logging.error(f"Directory not found: {pdf_directory}")
         return
+    # Create output directory if it doesn't exist
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
     # Get a list of all PDF files in the directory
     pdf_files = [f for f in os.listdir(pdf_directory) if f.endswith('.pdf')]
     if not pdf_files:
@@ -156,6 +160,7 @@ def main():
     # Iterate through each PDF file and process it
     for pdf_file in pdf_files:
         pdf_path = os.path.join(pdf_directory, pdf_file)
+        output_path = os.path.join(output_directory, f"{os.path.splitext(pdf_file)[0]}.txt")
         try:
             logging.info(f"Starting process for PDF: {pdf_path}")
             text = extract_text_from_pdf(pdf_path)  # Extract text from the provided PDF path
@@ -174,6 +179,10 @@ def main():
             summary = summarize_asc606_steps(text)
             logging.info("\nRevenue Recognition Summary:\n")
             logging.info(summary)  # Log the summarized revenue recognition steps
+            # Write the summary to a text file
+            with open(output_path, 'w', encoding='utf-8') as output_file:
+                output_file.write(summary)
+            logging.info(f"Summary written to: {output_path}")
         except FileNotFoundError:
             logging.error(f"File not found: {pdf_path}")
         except PermissionError:
