@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 import re
-import fitz  # Import fitz from PyMuPDF
+import pymupdf  # Import pymupdf from PyMuPDF
 from collections import defaultdict
 
 # Configure logging
@@ -14,7 +14,7 @@ def extract_text_from_pdf(pdf_path):
     try:
         logging.info(f"Extracting text from PDF file: {pdf_path}")
         # Open the PDF file using PyMuPDF
-        with fitz.Document(pdf_path) as doc:
+        with pymupdf.open(pdf_path) as doc:
             text = ""
             # Iterate through all pages and extract text
             for page_num in range(len(doc)):
