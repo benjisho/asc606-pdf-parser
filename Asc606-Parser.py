@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 import re
-from pdfminer.high_level import extract_text
+import fitz  # PyMuPDF
 from collections import defaultdict
 
 # Configure logging
@@ -19,12 +19,17 @@ def install_requirements():
         logging.error(f"Failed to install required packages: {e}")
         exit(1)
 
-# Step 1: Extract text from PDF
+# Step 1: Extract text from PDF using PyMuPDF
 def extract_text_from_pdf(pdf_path):
     try:
         logging.info(f"Extracting text from PDF file: {pdf_path}")
-        # Extract text from the given PDF file using pdfminer.six
-        text = extract_text(pdf_path)
+        # Open the PDF file using PyMuPDF
+        with fitz.open(pdf_path) as doc:
+            text = ""
+            # Iterate through all pages and extract text
+            for page_num in range(len(doc)):
+                logging.info(f"Extracting text from page {page_num + 1}")
+                text += doc.load_page(page_num).get_text()
         logging.info("Finished extracting text from PDF")
         return text
     except FileNotFoundError:
@@ -34,10 +39,6 @@ def extract_text_from_pdf(pdf_path):
     except PermissionError:
         # Handle case where the file cannot be accessed due to permission issues
         logging.error(f"Permission denied: {pdf_path}")
-        return ""
-    except ValueError as e:
-        # Handle case where the file format is unsupported or the PDF is corrupted
-        logging.error(f"Unsupported file format or corrupted PDF: {pdf_path}. Error: {e}")
         return ""
     except Exception as e:
         # Handle any other exceptions that may occur
@@ -187,8 +188,6 @@ def main():
             logging.error(f"File not found: {pdf_path}")
         except PermissionError:
             logging.error(f"Permission denied: {pdf_path}")
-        except ValueError as e:
-            logging.error(f"Unsupported file format or corrupted PDF: {pdf_path}. Error: {e}")
         except Exception as e:
             logging.error(f"An unexpected error occurred: {e}")
 
