@@ -1,7 +1,8 @@
 # PDF files
-output_files/*
+output_files/*.*
 
 # PDF files
+pdf_files_to_parse/*.pdf
 pdf_files_to_parse/*.pdf
 
 # Byte-compiled / optimized / DLL files

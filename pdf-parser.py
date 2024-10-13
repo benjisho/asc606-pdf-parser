@@ -7,13 +7,17 @@ import argparse
 from collections import defaultdict
 
 # Parse command line arguments
-parser = argparse.ArgumentParser(description="Process PDF files for ASC 606 analysis.")
+parser = argparse.ArgumentParser(description="Process PDF files and extract relevant information.")
 parser.add_argument('--debug', action='store_true', help="Enable debug logging")
 args = parser.parse_args()
 
 # Configure logging
 logging_level = logging.DEBUG if args.debug else logging.INFO
 logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
+# Add file handler to retain logs for future reference
+file_handler = logging.FileHandler('pdf_parser.log')
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+logging.getLogger().addHandler(file_handler)
 
 # Step 1: Extract text from PDF using PyMuPDF
 
@@ -42,7 +46,8 @@ def extract_text_from_pdf(pdf_path):
         logging.error(f"Error extracting text from PDF: {e}")
         return ""
 
-# Step 2: Define functions to identify ASC 606 steps
+# Step 2: Define functions to identify key information from the PDF
+
 def identify_contract(text):
     logging.debug("Identifying contract with customer...")
     # Define patterns to search for contract-related information
@@ -99,6 +104,7 @@ def recognize_revenue(text):
     return result
 
 # Step 3: Extract sections based on patterns
+
 def extract_section(text, patterns, step_name):
     all_matches = []
     for pattern in patterns:
@@ -112,8 +118,9 @@ def extract_section(text, patterns, step_name):
         return f"{step_name}: {'; '.join(all_matches)}"
     return None  # Return None if no match is found
 
-# Step 4: Parse and summarize ASC 606 steps
-def summarize_asc606_steps(text):
+# Step 4: Parse and summarize key information
+
+def summarize_pdf_contents(text):
     summary = []
     # Define the steps and their descriptions
     steps = [
@@ -133,6 +140,7 @@ def summarize_asc606_steps(text):
     return "\n".join(summary)  # Join all steps into a single summary string
 
 # Main function
+
 def main():
     # Main function to start the process of extracting and summarizing information from all PDFs in the directory
     pdf_directory = "pdf_files_to_parse"
@@ -161,8 +169,8 @@ def main():
                 continue
             # Clean and preprocess the extracted text
             text = re.sub(r'\s+', ' ', text).strip()  # Remove extra whitespace and special characters
-            # Summarize the ASC 606 steps based on the extracted text
-            summary = summarize_asc606_steps(text)
+            # Summarize the key information based on the extracted text
+            summary = summarize_pdf_contents(text)
             # Write the summary to a text file
             with open(output_path, 'w', encoding='utf-8') as output_file:
                 output_file.write(summary)
