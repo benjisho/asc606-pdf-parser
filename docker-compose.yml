@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   pdf-parser:
-    image: benjisho/pdf-parser  # Use the pre-built image from Docker Hub
+    image: benjisho/pdf-parser
     build:
-      context: .  # Build from the current directory if the image is not available
+      context: .
       dockerfile: Dockerfile
     volumes:
-      - ./pdf_files_to_parse:/app/pdf_files_to_parse  # Map local directory for input PDFs
-      - ./output_files:/app/output_files  # Map local directory for output summaries
+      - ./pdf_files_to_parse:/app/pdf_files_to_parse:rw  # Map local directory for input PDFs
+      - ./output_files:/app/output_files:rw  # Map local directory for output summaries
     environment:
       - PYTHONUNBUFFERED=1  # Ensure Python output is immediately flushed
-    command: ["--debug"]  # Run with debug flag if needed
     restart: unless-stopped
+    # command: ["--debug"]  # Uncomment to run with debug flag if needed

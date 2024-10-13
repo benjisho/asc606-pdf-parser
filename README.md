@@ -55,7 +55,7 @@ The Docker container for this project is accessible via Docker Hub.
 To use Docker Compose to run the container, use the following command:
 
 ```bash
-docker-compose up --rm --build
+docker compose run --rm --build pdf-parser
 ```
 
 This command will build the container image and start the service, removing intermediate containers after they stop.
