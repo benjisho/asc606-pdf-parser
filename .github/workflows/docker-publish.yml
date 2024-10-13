@@ -22,6 +22,7 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}  # Docker Hub token stored in GitHub secrets
   DOCKER_REGISTRY: docker.io  # Docker registry URL
   IMAGE_TAG: latest  # Default tag for the image
+  RELEASE_TAG: v1.0.0  # Release tag for versioning the Docker image
   
 # Define the job to build and publish the Docker image
 jobs:
@@ -52,9 +53,16 @@ jobs:
           push: true  # Push the image to Docker Hub
           tags: |
             benjisho/pdf-parser:latest
-            benjisho/pdf-parser:${{ github.sha }}
             benjisho/pdf-parser:${{ github.ref_name }}
+            benjisho/pdf-parser:${{ env.RELEASE_TAG }}
 
       # Step 5: Log out from Docker Hub
       - name: Log out from Docker Hub
         run: docker logout
+
+      # Step 6: Cleanup workspace
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "Cleaning up workspace..."
+          sudo rm -rf *
