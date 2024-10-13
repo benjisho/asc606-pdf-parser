@@ -6,9 +6,14 @@ FROM python:3.12.7-slim-bookworm
 # Set working directory for the application
 WORKDIR /app
 
-# Create a non-root user and switch to it
+# Create a non-root user
 # Adding a non-login shell to enhance security by preventing unintended user access
 RUN useradd -m -s /usr/sbin/nologin appuser
+
+# Change ownership of /app to the appuser
+RUN chown -R appuser /app
+
+# Switch to the non-root user
 USER appuser
 
 # Copy Python requirements file first to take advantage of Docker layer caching
