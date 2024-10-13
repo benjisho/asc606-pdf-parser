@@ -3,11 +3,13 @@
 This project provides a Python script to parse PDF files and extract relevant information. The script processes PDF documents in a specified directory and writes the results to text files for easy reference.
 
 ## Features
-- Extract text from PDF files using **PyMuPDF**.
+
+- Extract text from PDF files using PyMuPDF.
 - Output summaries to text files.
 - Optional `--debug` flag for additional detailed logging.
 
 ## Prerequisites
+
 - Python 3.6+
 - PyMuPDF library (`pymupdf`)
 
@@ -18,12 +20,14 @@ pip install -r requirements.txt
 ```
 
 ## Directory Structure
+
 - `pdf_files_to_parse/`: Directory containing the PDF files to be processed.
 - `output_files/`: Directory where the extracted summaries will be saved.
 
 ## Usage
 
 ### Command Line Arguments
+
 - `--debug`: Enable detailed debug logging for troubleshooting purposes.
 
 ### Running the Script
@@ -41,6 +45,20 @@ python pdf-parser.py --debug
 ```
 
 The script will process all PDF files in the `pdf_files_to_parse` directory and save the summary outputs to the `output_files` directory.
+
+### Docker
+
+The Docker container for this project is accessible via Docker Hub.
+
+### Running with Docker Compose
+
+To use Docker Compose to run the container, use the following command:
+
+```bash
+docker-compose up --rm --build
+```
+
+This command will build the container image and start the service, removing intermediate containers after they stop.
 
 ## Example Workflow
 
