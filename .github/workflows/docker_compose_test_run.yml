@@ -1,0 +1,41 @@
+name: Docker Compose Test Run
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'  # Ensure README changes don't trigger a rebuild
+      - 'LICENSE'  # License changes are unlikely to affect the Docker build
+      - '.gitignore'  # Gitignore changes shouldn't affect the image
+      - '.github/workflows/**'  # Changes to workflows should not trigger Docker image build
+
+jobs:
+  docker_compose_interaction_test:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Install Expect
+      run: sudo apt-get update && sudo apt-get install -y expect
+
+    - name: Pull Docker Image
+      run: docker pull benjisho/pdf-parser
+
+    - name: Run Docker Compose with Expect
+      run: |
+        expect -c "
+          set timeout 600
+          spawn docker-compose run --rm pdf-parser
+          expect \"INFO - Starting process for PDF:\"
+          expect \"Finished extracting text from PDF\"
+        "
+
+    - name: Stop and Remove Docker Containers (Just in case)
+      run: docker-compose down
+
+    - name: Remove Docker Image
+      run: docker rmi benjisho/pdf-parser
+
+    timeout-minutes: 10
