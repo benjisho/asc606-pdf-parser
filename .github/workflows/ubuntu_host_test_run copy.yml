@@ -24,11 +24,12 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update && sudo apt-get install -y wget python3 python3-pip
-        rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r requirements.txt
+
+    - name: Install Python Requirements
+      run: rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r requirements.txt
 
     - name: Download Sample PDF
       run: |
-        mkdir -p pdf_files_to_parse
         wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
           echo "Failed to download sample PDF";
           exit 1;
