@@ -1,4 +1,4 @@
-name: Host Test Run
+name: Ubuntu Host Test Run
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update && sudo apt-get install -y wget python3 python3-pip
-        pip3 install -r requirements.txt
+        rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r requirements.txt
 
     - name: Download Sample PDF
       run: |
