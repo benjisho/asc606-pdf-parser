@@ -1,4 +1,4 @@
-name: Alpine Host Test Run
+name: Alpine Test Run
 
 on:
   push:
@@ -9,38 +9,70 @@ on:
       - main 
     paths-ignore:
       - 'README.md'  # Ensure README changes don't trigger a rebuild
-      - 'LICENSE'  # License changes are unlikely to affect the build
-      - '.gitignore'  # Gitignore changes shouldn't affect the script
-      - '.github/workflows/**'  # Changes to workflows should not trigger a build
+      - 'LICENSE'  # License changes are unlikely to affect the Docker build
+      - '.gitignore'  # Gitignore changes shouldn't affect the image
+      - '.github/workflows/**'  # Changes to workflows should not trigger Docker image build
 
 jobs:
-  alpine_host_interaction_test:
-    runs-on: ubuntu-24.04
+  alpine_test_run:
+    runs-on: ubuntu-latest  # Run on Ubuntu host, but use Alpine container for commands
+    container:
+      image: alpine:3.20  # Use Alpine 3.20 as the container
     steps:
+      - name: Install Dependencies
+        run: |
+          apk update && apk add --no-cache wget python3 py3-pip expect
 
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Set up Alpine Environment
-      run: |
-        docker run --rm -v $(pwd):/app -w /app alpine:latest sh -c "
-          apk add --no-cache wget python3 py3-pip && \
-          pip3 install -r requirements.txt && \
-          mkdir -p pdf_files_to_parse && \
+      - name: Install Python Dependencies
+        run: pip3 install -r requirements.txt
+
+      - name: Download Sample PDF
+        run: |
+          mkdir -p pdf_files_to_parse
           wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
-            echo 'Failed to download sample PDF';
+            echo "Failed to download sample PDF";
             exit 1;
-          } && \
-          python3 pdf-parser.py || {
-            echo 'Error: Parsing script failed';
-            exit 1;
-          } && \
+          }
+
+      - name: Run PDF Parser
+        id: run-parser
+        run: |
+          expect -c "
+            set timeout 600
+            spawn python3 pdf-parser.py
+            expect {
+              \"No PDF files found in directory: pdf_files_to_parse\" {
+                puts \"Error: No PDF files found\"
+                exit 1
+              }
+              \"Finished extracting text from PDF\" {
+                exp_continue
+              }
+              \"Summary written to: output_files/*\" {
+                puts \"Parsing successful\"
+                exit 0
+              }
+              default {
+                puts \"Error: Parsing failed\"
+                exit 1
+              }
+            }
+          "
+
+      - name: Verify Output File
+        run: |
           if [ ! -f output_files/sample.txt ]; then
-            echo 'Error: Parsed output file not found';
-            exit 1;
+            echo "Error: Output file not found!"
+            exit 1
           else
-            echo 'Parsing successful: Output file generated'
+            echo "Output file generated successfully."
           fi
-        "
+
+      - name: Clean Up
+        run: |
+          rm -rf pdf_files_to_parse output_files
 
     timeout-minutes: 10
