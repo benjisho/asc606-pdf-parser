@@ -1,0 +1,46 @@
+name: Alpine Host Test Run
+
+on:
+  push:
+    branches:
+      - main  # Trigger workflow on pushes to the main branch
+  pull_request:
+    branches: 
+      - main 
+    paths-ignore:
+      - 'README.md'  # Ensure README changes don't trigger a rebuild
+      - 'LICENSE'  # License changes are unlikely to affect the build
+      - '.gitignore'  # Gitignore changes shouldn't affect the script
+      - '.github/workflows/**'  # Changes to workflows should not trigger a build
+
+jobs:
+  alpine_host_interaction_test:
+    runs-on: ubuntu-24.04
+    steps:
+
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Alpine Environment
+      run: |
+        docker run --rm -v $(pwd):/app -w /app alpine:latest sh -c "
+          apk add --no-cache wget python3 py3-pip && \
+          pip3 install -r requirements.txt && \
+          mkdir -p pdf_files_to_parse && \
+          wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
+            echo 'Failed to download sample PDF';
+            exit 1;
+          } && \
+          python3 pdf-parser.py || {
+            echo 'Error: Parsing script failed';
+            exit 1;
+          } && \
+          if [ ! -f output_files/sample.txt ]; then
+            echo 'Error: Parsed output file not found';
+            exit 1;
+          else
+            echo 'Parsing successful: Output file generated'
+          fi
+        "
+
+    timeout-minutes: 10
