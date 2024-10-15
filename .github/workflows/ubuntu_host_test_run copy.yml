@@ -11,7 +11,7 @@ on:
       - 'README.md'  # Ensure README changes don't trigger a rebuild
       - 'LICENSE'  # License changes are unlikely to affect the build
       - '.gitignore'  # Gitignore changes shouldn't affect the script
-      - '.github/workflows/**'  # Changes to workflows should not trigger a build
+      - '.github/workflows/*'  # Changes to workflows should not trigger a build
 
 jobs:
   host_interaction_test:

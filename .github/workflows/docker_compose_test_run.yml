@@ -11,7 +11,7 @@ on:
       - 'README.md'  # Ensure README changes don't trigger a rebuild
       - 'LICENSE'  # License changes are unlikely to affect the Docker build
       - '.gitignore'  # Gitignore changes shouldn't affect the image
-      - '.github/workflows/**'  # Changes to workflows should not trigger Docker image build
+      - '.github/workflows/*'  # Changes to workflows should not trigger Docker image build
 
 jobs:
   docker_compose_interaction_test:
