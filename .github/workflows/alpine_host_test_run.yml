@@ -1,83 +1,73 @@
-name: Alpine Test Run
+name: Alpine Host Test Run
 
 on:
   push:
     branches:
-      - main  # Trigger workflow on pushes to the main branch
+      - main
   pull_request:
-    branches: 
-      - main 
+    branches:
+      - main
     paths-ignore:
-      - 'README.md'  # Ensure README changes don't trigger a rebuild
-      - 'LICENSE'  # License changes are unlikely to affect the Docker build
-      - '.gitignore'  # Gitignore changes shouldn't affect the image
-      - '.github/workflows/**'  # Changes to workflows should not trigger Docker image build
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.github/workflows/**'
 
 jobs:
-  alpine_test_run:
-    runs-on: ubuntu-latest  # Run on Ubuntu host, but use Alpine container for commands
+  alpine_host_test:
+    runs-on: ubuntu-latest  # Run on Ubuntu, which will then use an Alpine container for testing
     container:
-      image: alpine:3.20  # Use Alpine 3.20 as the container
+      image: alpine:3.18  # Use Alpine Linux container
+
     steps:
-      - name: Install Dependencies
-        run: |
-          apk update && apk add --no-cache wget python3 py3-pip expect
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    - name: Install Dependencies on Alpine
+      run: |
+        apk update
+        apk add --no-cache python3 py3-pip wget expect
 
-      - name: Disable Externally Managed Environment
-        run: sudo rm -f /usr/lib/python*/EXTERNALLY-MANAGED
+    - name: Download Sample PDF
+      run: |
+        wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
+          echo "Failed to download sample PDF";
+          exit 1;
+        }
 
-      - name: Install Dependencies
-        run: pip3 install -r requirements.txt
-        shell: sh -e {0}
+    - name: Install Python Requirements
+      run: |
+        pip3 install -r requirements.txt
 
-
-      - name: Download Sample PDF
-        run: |
-          mkdir -p pdf_files_to_parse
-          wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
-            echo "Failed to download sample PDF";
-            exit 1;
-          }
-
-      - name: Run PDF Parser
-        id: run-parser
-        run: |
-          expect -c "
-            set timeout 600
-            spawn python3 pdf-parser.py
-            expect {
-              \"No PDF files found in directory: pdf_files_to_parse\" {
-                puts \"Error: No PDF files found\"
-                exit 1
-              }
-              \"Finished extracting text from PDF\" {
-                exp_continue
-              }
-              \"Summary written to: output_files/*\" {
-                puts \"Parsing successful\"
-                exit 0
-              }
-              default {
-                puts \"Error: Parsing failed\"
-                exit 1
-              }
+    - name: Run Python Script with Expect
+      run: |
+        expect -c "
+          set timeout 600
+          spawn python3 pdf-parser.py
+          expect {
+            \"No PDF files found in directory: pdf_files_to_parse\" {
+              puts \"Error: No PDF files found\"
+              exit 1
             }
-          "
+            \"Finished extracting text from PDF\" {
+              exp_continue
+            }
+            \"Summary written to: output_files/*\" {
+              puts \"Parsing successful\"
+              exit 0
+            }
+            default {
+              puts \"Error: Parsing failed\"
+              exit 1
+            }
+          }
+        "
 
-      - name: Verify Output File
-        run: |
-          if [ ! -f output_files/sample.txt ]; then
-            echo "Error: Output file not found!"
-            exit 1
-          else
-            echo "Output file generated successfully."
-          fi
-
-      - name: Clean Up
-        run: |
-          rm -rf pdf_files_to_parse output_files
+    - name: Verify Output File
+      run: |
+        if [ ! -f output_files/sample.txt ]; then
+          echo "Error: Output file not found"
+          exit 1
+        fi
 
     timeout-minutes: 10
