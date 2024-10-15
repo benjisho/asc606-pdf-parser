@@ -26,11 +26,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Enabe Externally Managed Environment restriction
-        run: rm -f /usr/share/python*/EXTERNALLY-MANAGED
+      - name: Disable Externally Managed Environment
+        run: sudo rm -f /usr/lib/python*/EXTERNALLY-MANAGED
 
-      - name: Install Python Dependencies
+      - name: Install Dependencies
         run: pip3 install -r requirements.txt
+        shell: sh -e {0}
+
 
       - name: Download Sample PDF
         run: |
