@@ -1,8 +1,12 @@
 name: Docker Compose Test Run
 
 on:
+  push:
+    branches:
+      - main  # Trigger workflow on pushes to the main branch
   pull_request:
-    branches: [ main ]
+    branches: 
+      - main 
     paths-ignore:
       - 'README.md'  # Ensure README changes don't trigger a rebuild
       - 'LICENSE'  # License changes are unlikely to affect the Docker build
@@ -11,7 +15,7 @@ on:
 
 jobs:
   docker_compose_interaction_test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
 
     - name: Checkout Repository
@@ -20,20 +24,43 @@ jobs:
     - name: Install Expect
       run: sudo apt-get update && sudo apt-get install -y expect
 
+    - name: Download Sample PDF
+      run: |
+        wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
+          echo "Failed to download sample PDF";
+          exit 1;
+        }
+
     - name: Pull Docker Image
       run: docker pull benjisho/pdf-parser
 
     - name: Run Docker Compose with Expect
+      id: run-parser
       run: |
         expect -c "
           set timeout 600
-          spawn docker-compose run --rm pdf-parser
-          expect \"INFO - Starting process for PDF:\"
-          expect \"Finished extracting text from PDF\"
+          spawn docker compose run --rm pdf-parser
+          expect {
+            \"No PDF files found in directory: pdf_files_to_parse\" {
+              puts \"Error: No PDF files found\"
+              exit 1
+            }
+            \"Finished extracting text from PDF\" {
+              exp_continue
+            }
+            \"Summary written to: output_files/*\" {
+              puts \"Parsing successful\"
+              exit 0
+            }
+            default {
+              puts \"Error: Parsing failed\"
+              exit 1
+            }
+          }
         "
 
     - name: Stop and Remove Docker Containers (Just in case)
-      run: docker-compose down
+      run: docker compose down -v --remove-orphans
 
     - name: Remove Docker Image
       run: docker rmi benjisho/pdf-parser
