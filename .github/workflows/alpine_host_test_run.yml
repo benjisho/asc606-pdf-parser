@@ -17,7 +17,7 @@ jobs:
   alpine_host_test:
     runs-on: ubuntu-latest  # Run on Ubuntu, which will then use an Alpine container for testing
     container:
-      image: alpine:3.18  # Use Alpine Linux container
+      image: alpine:3.20  # Use Alpine Linux container
 
     steps:
     - name: Checkout Repository
