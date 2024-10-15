@@ -1,0 +1,71 @@
+name: Docker Run Test
+
+on:
+  push:
+    branches:
+      - main  # Trigger workflow on pushes to the main branch
+  pull_request:
+    branches: 
+      - main 
+    paths-ignore:
+      - 'README.md'  # Ensure README changes don't trigger a rebuild
+      - 'LICENSE'  # License changes are unlikely to affect the Docker build
+      - '.gitignore'  # Gitignore changes shouldn't affect the image
+      - '.github/workflows/**'  # Changes to workflows should not trigger Docker image build
+
+jobs:
+  docker_run_interaction_test:
+    runs-on: ubuntu-24.04
+    steps:
+
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Install Expect
+      run: sudo apt-get update && sudo apt-get install -y expect
+
+    - name: Download Sample PDF
+      run: |
+        wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
+          echo "Failed to download sample PDF";
+          exit 1;
+        }
+
+    - name: Pull Docker Image
+      run: docker pull benjisho/pdf-parser
+
+    - name: Run Docker with Expect
+      id: run-parser
+      run: |
+        expect -c "
+          set timeout 600
+          spawn docker run --rm \
+            -v $(pwd)/pdf_files_to_parse:/app/pdf_files_to_parse:rw \
+            -v $(pwd)/output_files:/app/output_files:rw \
+            benjisho/pdf-parser
+          expect {
+            \"No PDF files found in directory: pdf_files_to_parse\" {
+              puts \"Error: No PDF files found\"
+              exit 1
+            }
+            \"Finished extracting text from PDF\" {
+              exp_continue
+            }
+            \"Summary written to: output_files/*\" {
+              puts \"Parsing successful\"
+              exit 0
+            }
+            default {
+              puts \"Error: Parsing failed\"
+              exit 1
+            }
+          }
+        "
+
+    - name: Stop and Remove Docker Containers (Just in case)
+      run: docker system prune -f
+
+    - name: Remove Docker Image
+      run: docker rmi benjisho/pdf-parser
+
+    timeout-minutes: 10
