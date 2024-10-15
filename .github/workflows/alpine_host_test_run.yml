@@ -37,7 +37,7 @@ jobs:
 
     - name: Install Python Requirements
       run: |
-        pip3 install -r requirements.txt
+        rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r requirements.txt
 
     - name: Run Python Script with Expect
       run: |
