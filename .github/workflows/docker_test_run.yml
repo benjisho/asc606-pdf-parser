@@ -42,7 +42,8 @@ jobs:
           spawn docker run --rm \
             -v $(pwd)/pdf_files_to_parse:/app/pdf_files_to_parse:rw \
             -v $(pwd)/output_files:/app/output_files:rw \
-            benjisho/pdf-parser
+            benjisho/asc606-pdf-parser
+
           expect {
             \"No PDF files found in directory: pdf_files_to_parse\" {
               puts \"Error: No PDF files found\"
@@ -66,6 +67,6 @@ jobs:
       run: docker system prune -f
 
     - name: Remove Docker Image
-      run: docker rmi benjisho/pdf-parser
+      run: docker rmi benjisho/asc606-pdf-parser
 
     timeout-minutes: 10
