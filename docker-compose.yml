@@ -1,14 +1,14 @@
-
 services:
   asc606-pdf-parser:
     image: benjisho/asc606-pdf-parser
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: .  # Use the current directory as the build context
+      dockerfile: Dockerfile  # Specify the Dockerfile to use for building the image
     volumes:
-      - ./pdf_files_to_parse:/app/pdf_files_to_parse:rw  # Map local directory for input PDFs
-      - ./output_files:/app/output_files:rw  # Map local directory for output summaries
+      - ./pdf_files_to_parse:/app/pdf_files_to_parse:rw  # Map local directory for input PDFs to container
+      - ./output_files:/app/output_files:rw  # Map local directory for output summaries to container
     environment:
-      - PYTHONUNBUFFERED=1  # Ensure Python output is immediately flushed
-    restart: unless-stopped
-    # command: ["--debug"]  # Uncomment to run with debug flag if needed
+      - PYTHONUNBUFFERED=1  # Python output immediately flushed for better logging
+    restart: unless-stopped  # Automatically restart the container unless it is explicitly stopped
+    
+    # command: ["--debug"]  # Uncomment to run with debug flag if detailed logging is needed
