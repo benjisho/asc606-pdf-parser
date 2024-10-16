@@ -7,7 +7,6 @@ on:
       - main  # Trigger workflow on pushes to the main branch
     paths-ignore:
       - 'README.md'  # Ensure README changes don't trigger a rebuild
-      - 'docker-compose.yml'  # Changes to compose file might be needed for local runs, not for Docker image builds
       - 'LICENSE'  # License changes are unlikely to affect the Docker build
       - '.dockerignore'  # Dockerignore changes generally won't affect the image content itself
       - '.gitignore'  # Gitignore changes shouldn't affect the image

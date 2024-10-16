@@ -12,4 +12,3 @@ services:
       - PYTHONUNBUFFERED=1  # Ensure Python output is immediately flushed
     restart: unless-stopped
     # command: ["--debug"]  # Uncomment to run with debug flag if needed
-    
