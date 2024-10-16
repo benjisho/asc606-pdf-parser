@@ -1,4 +1,4 @@
-# PDF Parser
+# ASC 606 PDF Parser
 
 This project provides a Python script to parse PDF files and extract relevant information. The script processes PDF documents in a specified directory and writes the results to text files for easy reference.
 
