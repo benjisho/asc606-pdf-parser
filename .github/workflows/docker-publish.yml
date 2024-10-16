@@ -17,7 +17,7 @@ on:
 
 # Define environment variables used throughout the workflow
 env:
-  DOCKER_IMAGE: pdf-parser  # Name of the Docker image
+  DOCKER_IMAGE: asc606-pdf-parser  # Name of the Docker image
   DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}  # Docker Hub username stored in GitHub secrets
   DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}  # Docker Hub token stored in GitHub secrets
   DOCKER_REGISTRY: docker.io  # Docker registry URL
@@ -52,9 +52,9 @@ jobs:
           context: .  # Use the current directory as the build context
           push: true  # Push the image to Docker Hub
           tags: |
-            benjisho/pdf-parser:latest
-            benjisho/pdf-parser:${{ github.ref_name }}
-            benjisho/pdf-parser:${{ env.RELEASE_TAG }}
+            benjisho/asc606-pdf-parser:latest
+            benjisho/asc606-pdf-parser:${{ github.ref_name }}
+            benjisho/asc606-pdf-parser:${{ env.RELEASE_TAG }}
 
       # Step 5: Log out from Docker Hub
       - name: Log out from Docker Hub

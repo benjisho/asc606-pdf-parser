@@ -32,7 +32,7 @@ jobs:
         }
 
     - name: Pull Docker Image
-      run: docker pull benjisho/pdf-parser
+      run: docker pull benjisho/asc606-pdf-parser
 
     - name: Run Docker with Expect
       id: run-parser

@@ -1,7 +1,7 @@
 
 services:
-  pdf-parser:
-    image: benjisho/pdf-parser
+  asc606-pdf-parser:
+    image: benjisho/asc606-pdf-parser
     build:
       context: .
       dockerfile: Dockerfile

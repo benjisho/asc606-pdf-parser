@@ -15,8 +15,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application files
 # Copying the main Python script after installing dependencies to reduce rebuild time when code changes
-COPY pdf-parser.py ./
+COPY asc606-pdf-parser ./
 
 # Command to run the script
 # Using 'python' to run the script
-ENTRYPOINT ["python3", "pdf-parser.py"]
+ENTRYPOINT ["python3", "asc606-pdf-parser"]

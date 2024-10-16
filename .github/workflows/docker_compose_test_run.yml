@@ -26,20 +26,20 @@ jobs:
 
     - name: Download Sample PDF
       run: |
-        wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
+        cd || {
           echo "Failed to download sample PDF";
           exit 1;
         }
 
     - name: Pull Docker Image
-      run: docker pull benjisho/pdf-parser
+      run: docker pull benjisho/asc606-pdf-parser
 
     - name: Run Docker Compose with Expect
       id: run-parser
       run: |
         expect -c "
           set timeout 600
-          spawn docker compose run --rm pdf-parser
+          spawn docker compose run --rm asc606-pdf-parser
           expect {
             \"No PDF files found in directory: pdf_files_to_parse\" {
               puts \"Error: No PDF files found\"
@@ -63,6 +63,6 @@ jobs:
       run: docker compose down -v --remove-orphans
 
     - name: Remove Docker Image
-      run: docker rmi benjisho/pdf-parser
+      run: docker rmi benjisho/asc606-pdf-parser
 
     timeout-minutes: 10
