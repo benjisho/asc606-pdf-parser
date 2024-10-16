@@ -26,7 +26,7 @@ jobs:
 
     - name: Download Sample PDF
       run: |
-        cd || {
+        wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
           echo "Failed to download sample PDF";
           exit 1;
         }
