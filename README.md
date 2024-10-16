@@ -7,12 +7,12 @@ This project provides a Python script to parse PDF files and extract relevant in
 [Prerequisites](#prerequisites)
 [Directory Structure](#directory-structure)
 [Usage](#usage)
-[Before Your Run the Code](#before-your-run-the-code)
-[Command Line Arguments](#command-line-arguments)
-[**Option 1** Running the Script regularly](#option-1-running-the-script-regularly)
-[**Option 2** Using Docker](#option-2-using-docker)
-[**Option 3 Preferred** Running with Docker Compose](#option-3-preferred-running-with-docker-compose)
-[Logging](#logging)
+    Before Your Run the Code](#before-your-run-the-code)
+    [Command Line Arguments](#command-line-arguments)
+    [**Option 1** Running the Script regularly](#option-1-running-the-script-regularly)
+    [**Option 2** Using Docker](#option-2-using-docker)
+    [**Option 3 Preferred** Running with Docker Compose](#option-3-preferred-running-with-docker-compose)
+    [Logging](#logging)
 [Notes](#notes)
 [License](#license)
 
@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-## Before Your Run the Code
+### Before Your Run the Code
 
 1. Place all PDF files that you want to process in the `pdf_files_to_parse` directory.
 2. Run the script as described in the "Usage" section.
