@@ -4,16 +4,21 @@ This project provides a Python script to parse PDF files and extract relevant in
 
 ## Table of Contents
 [Features](#features)
+
 [Prerequisites](#prerequisites)
+
 [Directory Structure](#directory-structure)
+
 [Usage](#usage)
-    Before Your Run the Code](#before-your-run-the-code)
-    [Command Line Arguments](#command-line-arguments)
-    [**Option 1** Running the Script regularly](#option-1-running-the-script-regularly)
-    [**Option 2** Using Docker](#option-2-using-docker)
-    [**Option 3 Preferred** Running with Docker Compose](#option-3-preferred-running-with-docker-compose)
-    [Logging](#logging)
+- [Before Your Run the Code](#before-your-run-the-code)
+- [Command Line Arguments](#command-line-arguments)
+- [**Option 1** Running the Script regularly](#option-1-running-the-script-regularly)
+- [**Option 2** Using Docker](#option-2-using-docker)
+- [**Option 3 Preferred** Running with Docker Compose](#option-3-preferred-running-with-docker-compose)
+- [Logging](#logging)
+
 [Notes](#notes)
+
 [License](#license)
 
 ## Features
