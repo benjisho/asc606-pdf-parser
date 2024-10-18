@@ -29,8 +29,8 @@ jobs:
         apk add --no-cache python3 py3-pip wget expect
 
     - name: Install Python Requirements
-      run: rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r requirements.txt
-      
+      run: rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r asc606-pdf-parser-app/requirements.txt
+          
     - name: Download Sample PDF
       run: |
         wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
