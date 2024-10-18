@@ -38,7 +38,7 @@ jobs:
     - name: Run PDF Parser
       id: run-parser
       run: |
-        python3 asc606-pdf-parser.py || {
+        python3 asc606-pdf-parser-app/asc606-pdf-parser.py || {
           echo "Error: Parsing script failed";
           exit 1;
         }
