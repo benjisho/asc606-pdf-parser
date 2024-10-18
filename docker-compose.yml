@@ -1,11 +1,10 @@
 version: '3'
 services:
-
   asc606-pdf-parser:
-    image: benjisho/asc606-pdf-parser:v1.1.0
+    image: benjisho/asc606-pdf-parser:v1.0.1
     build:
-      context: ./asc606-pdf-parser-app
-      dockerfile: Dockerfile.pdf-parser
+      context: ./asc606-pdf-parser-app  # Context for building the parser image
+      dockerfile: Dockerfile.pdf-parser  # Correct Dockerfile for the parser
     volumes:
       - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
@@ -14,10 +13,10 @@ services:
     restart: unless-stopped
 
   website:
-    image: benjisho/asc606-pdf-parser-website:v1.1.0
+    image: benjisho/asc606-pdf-parser-website:v1.0.1
     build:
-      context: ./asc606-pdf-parser-website
-      dockerfile: Dockerfile.website
+      context: ./asc606-pdf-parser-website  # Context for building the website
+      dockerfile: Dockerfile.website  # Dockerfile for the website
     volumes:
       - ./asc606-pdf-parser-website:/app/
       - ./asc606-pdf-parser-app:/app/asc606-pdf-parser-app

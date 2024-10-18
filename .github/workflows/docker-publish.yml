@@ -48,6 +48,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./asc606-pdf-parser-app  # Directory for the parser app
+          file: ./asc606-pdf-parser-app/Dockerfile.pdf-parser
           push: true
           tags: |
             benjisho/asc606-pdf-parser:latest
@@ -83,6 +84,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./asc606-pdf-parser-website  # Directory for the website
+          file: ./asc606-pdf-parser-website/Dockerfile.website
           push: true
           tags: |
             benjisho/asc606-pdf-parser-website:latest
