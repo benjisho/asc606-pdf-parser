@@ -82,7 +82,7 @@ docker run --rm \
   -v "$(pwd)/pdf_files_to_parse:/app/pdf_files_to_parse" \
   -v "$(pwd)/output_files:/app/output_files" \
   -e PYTHONUNBUFFERED=1 \
-  benjisho/asc606-pdf-parser:v1.1.0
+  benjisho/asc606-pdf-parser:latest
 ```
 
 ### **Option 3 Preferred** Running with Docker Compose
