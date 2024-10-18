@@ -60,13 +60,13 @@ pip install -r requirements.txt
 To run the script, execute the following command:
 
 ```bash
-python asc606-pdf-parser.py
+python ./asc606-pdf-parser-app/asc606-pdf-parser.py
 ```
 
 If you want to enable detailed debug logging, use:
 
 ```bash
-python asc606-pdf-parser.py --debug
+python ./asc606-pdf-parser-app/asc606-pdf-parser.py --debug
 ```
 
 The script will process all PDF files in the `pdf_files_to_parse` directory and save the summary outputs to the `output_files` directory.
@@ -75,11 +75,21 @@ The script will process all PDF files in the `pdf_files_to_parse` directory and 
 
 The Docker container for this project is accessible via Docker Hub.
 
+To run the pdf-parser container with Docker:
+
+```bash
+docker run --rm -v ./pdf_files_to_parse:/pdf_files_to_parse -v ./output_files:/output_files benjisho/asc606-pdf-parser:latest
+```
+
 ### **Option 3 Preferred** Running with Docker Compose
 
 To use Docker Compose to run the container, use the following command:
 
 ```bash
+# Using through a web interface
+docker-compose up --build website
+
+# Using the asc606-pdf-parser directly (easiest and fastest)
 docker compose run --rm --build asc606-pdf-parser
 ```
 

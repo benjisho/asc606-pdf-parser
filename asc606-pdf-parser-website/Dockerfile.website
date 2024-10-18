@@ -1,0 +1,18 @@
+# Base image
+FROM python:3.12.7-slim-bookworm
+
+# Set working directory
+WORKDIR /app
+
+# Copy the requirements file for Flask
+COPY ./requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the Flask app
+COPY ./ /app/
+
+# Expose port 5000 for Flask
+EXPOSE 5000
+
+# Command to run the Flask app
+CMD ["python", "app.py"]

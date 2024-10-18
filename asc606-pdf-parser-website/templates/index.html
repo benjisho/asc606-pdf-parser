@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASC606 PDF Parser</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Upload and Parse ASC606 PDF</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="file">Upload your asc606 PDF:</label>
+        <input type="file" name="file" id="file" accept=".pdf" required>
+        <button type="submit">Upload</button>
+    </form>
+    <div id="output">
+        {% if output_file %}
+        <p>Your PDF has been parsed! <a href="/download/{{ output_file }}">Click to download your text file here.</a></p>
+        {% endif %}
+    </div>
+</body>
+</html>
