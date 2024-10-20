@@ -1,52 +1,89 @@
 /* Base styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f7f7f7, #ffffff);
+    color: #2c3e50;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 /* Form container */
 .container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
+    max-width: 500px;
+    width: 100%;
+    animation: fadeIn 1s ease-in-out;
+    border: 1px solid #ecf0f1;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Input field styling */
 input[type="file"] {
-    background-color: #f9fafb;
-    color: #333;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 10px;
-}
-
-/* Button styling */
-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: none;
+    background-color: #f7f7f7;
+    color: #34495e;
+    border: 2px solid #3498db;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
+input[type="file"]:hover {
+    border-color: #2980b9;
+}
+
+/* Button styling */
+button {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    width: 100%;
+}
+
 button:hover {
-    background-color: #45a049;
+    background-color: #2980b9;
     transform: translateY(-2px);
+}
+
+/* Loading message styles */
+#loading-message {
+    font-size: 20px;
+    color: #3498db;
+    margin-top: 20px;
 }
 
 /* Output container */
 #output {
-    margin-top: 20px;
+    margin-top: 30px;
+    color: #2c3e50;
+    font-size: 18px;
 }
 
 /* General styling for form hover effects */
@@ -56,4 +93,34 @@ button:hover {
 
 .form-hover:hover {
     transform: scale(1.05);
+}
+
+/* Link styling */
+a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #2980b9;
+}
+
+/* Border for form */
+#upload-form {
+    border: 1px solid #ecf0f1;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Rounded button corners and smoother transitions */
+button {
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
 }
