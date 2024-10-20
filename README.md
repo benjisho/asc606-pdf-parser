@@ -90,8 +90,10 @@ docker run --rm \
 To use Docker Compose to run the container, use the following command:
 
 ```bash
-# Using through a web interface
-docker-compose up --build website
+# Using through a web interface service
+docker-compose up -d --build website
+# Testing the website before running as -d (detached)
+docker compose run --rm --build website
 
 # Using the asc606-pdf-parser directly (easiest and fastest)
 docker compose run --rm --build asc606-pdf-parser
