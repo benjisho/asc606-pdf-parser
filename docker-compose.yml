@@ -18,7 +18,7 @@ services:
       context: ./asc606-pdf-parser-website  # Context for building the website
       dockerfile: Dockerfile.website  # Dockerfile for the website
     volumes:
-      - ./asc606-pdf-parser-website:/app/
+      - ./asc606-pdf-parser-website:/app/asc606-pdf-parser-website
       - ./asc606-pdf-parser-app:/app/asc606-pdf-parser-app
       - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
