@@ -53,33 +53,48 @@
     <script defer src="/static/js/animation-for-working.js"></script>
   </head>
   <body class="dark">
+
     <div class="bg-background text-primary-foreground min-h-screen flex flex-col items-center justify-center p-6">
-        <h1 class="text-5xl font-extrabold mb-8 text-center text-accent">Upload and Parse ASC606 PDF to Text</h1>
+      <h1 class="text-5xl font-extrabold mb-8 text-center text-accent">Upload and Parse ASC606 PDF to Text</h1>
 
-        <!-- Flash Messages for User Feedback -->
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <ul class="text-red-500">
-              {% for message in messages %}
-                <li>{{ message }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
+      <!-- Form Section -->
+      <form
+        id="upload-form"
+        action="/upload"
+        method="POST"
+        enctype="multipart/form-data"
+        class="flex flex-col items-center space-y-6 bg-card rounded-lg shadow-xl p-8 transition-transform transform hover:scale-105 duration-300"
+      >
+        <label for="file" class="text-primary text-lg font-semibold">Upload your ASC606 PDF:</label>
+        <input
+          type="file"
+          name="file"
+          id="file"
+          accept=".pdf"
+          required
+          class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-ring transition duration-200 hover:border-accent"
+        />
 
-        <!-- Form Section -->
-        <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data" class="flex flex-col items-center space-y-6 bg-card rounded-lg shadow-xl p-8 transition-transform transform hover:scale-105 duration-300">
-            <label for="file" class="text-primary text-lg font-semibold">Upload your ASC606 PDF:</label>
-            <input type="file" name="file" id="file" accept=".pdf" required class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-ring transition duration-200 hover:border-accent" />
-            <button type="submit" class="bg-primary text-primary-foreground rounded-lg px-8 py-3 hover:bg-primary/80 transition-colors duration-300 shadow-lg transform hover:translate-y-1">Upload</button>
-        </form>
+        <!-- Show error message if exists -->
+        {% if error_message %}
+        <p class="text-red-500 mt-2">{{ error_message }}</p>
+        {% endif %}
 
-        <!-- Output Section -->
-        <div id="output" class="mt-8 text-center">
-            {% if output_file %}
-            <p class="text-primary text-lg">Your PDF has been parsed! <a href="/download/{{ output_file }}" class="underline text-accent hover:text-accent/80">Click to download your text file here.</a></p>
-            {% endif %}
-        </div>
+        <button type="submit" class="bg-primary text-primary-foreground rounded-lg px-8 py-3 hover:bg-primary/80 transition-colors duration-300 shadow-lg transform hover:translate-y-1">Upload</button>
+      </form>
+
+      <!-- Loading Message -->
+      <div id="loading-message" class="hidden text-primary text-lg mt-8">
+        Working<span id="dot-animation">...</span>
+      </div>
+
+      <!-- Output Section -->
+      <div id="output" class="mt-8 text-center">
+        {% if output_file %}
+        <p class="text-primary text-lg">Your PDF has been parsed! <a href="/download/{{ output_file }}" class="underline text-accent hover:text-accent/80">Click to download your text file here.</a></p>
+        {% endif %}
+      </div>
     </div>
-</body>
+
+  </body>
 </html>

@@ -32,15 +32,13 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
-        flash("No file part in the request")
-        return redirect(request.url)
+        return render_template('index.html', error_message="No file part in the request")
     
     file = request.files['file']
     
     if file.filename == '':
-        flash("No selected file")
-        return redirect(request.url)
-    
+        return render_template('index.html', error_message="No selected file")
+
     if file and allowed_file(file.filename):
         # Save the uploaded file to the upload directory
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
@@ -49,8 +47,7 @@ def upload_file():
         # Check if the uploaded file is indeed a PDF
         if not is_valid_pdf(file_path):
             os.remove(file_path)  # Remove the invalid file
-            flash("Invalid or corrupted PDF file")
-            return redirect(request.url)
+            return render_template('index.html', error_message="Invalid or corrupted PDF file")
 
         # Run the parser directly within the container
         subprocess.run(['python3', '/app/asc606-pdf-parser-app/asc606-pdf-parser.py'], check=True)
@@ -59,8 +56,8 @@ def upload_file():
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
         return render_template('index.html', output_file=output_file)
     else:
-        flash("File type not allowed. Only PDF files are accepted.")
-        return redirect(request.url)
+        # Display an error message for unsupported file type
+        return render_template('index.html', error_message="File type not allowed. Only PDF files are accepted.")
 
 @app.route('/download/<filename>')
 def download_file(filename):
