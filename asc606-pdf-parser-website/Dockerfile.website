@@ -4,6 +4,9 @@ FROM python:3.12.7-slim-bookworm
 # Set working directory
 WORKDIR /app
 
+# Install ClamAV in the container
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y clamav clamav-daemon && apt autoremove && rm -rf /var/lib/apt/lists/*
+
 # Copy the requirements file for Flask
 COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
