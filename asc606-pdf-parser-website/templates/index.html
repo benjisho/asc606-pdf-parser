@@ -74,6 +74,12 @@
           required
           class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-ring transition duration-200 hover:border-accent"
         />
+
+        <!-- Show error message if exists -->
+        {% if error_message %}
+        <p class="text-red-500 mt-2">{{ error_message }}</p>
+        {% endif %}
+
         <button type="submit" class="bg-primary text-primary-foreground rounded-lg px-8 py-3 hover:bg-primary/80 transition-colors duration-300 shadow-lg transform hover:translate-y-1">Upload</button>
       </form>
 
