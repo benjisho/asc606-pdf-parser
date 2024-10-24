@@ -3,13 +3,18 @@ services:
   asc606-pdf-parser:
     image: benjisho/asc606-pdf-parser:v1.0.1
     build:
-      context: ./asc606-pdf-parser-app  # Context for building the parser image
-      dockerfile: Dockerfile.pdf-parser  # Correct Dockerfile for the parser
+      context: ./asc606-pdf-parser-app
+      dockerfile: Dockerfile.pdf-parser
     volumes:
-      - ./pdf_files_to_parse:/app/pdf_files_to_parse
+      - ./pdf_files_to_parse:/app/pdf_files_to_parse:ro  # Read-only mount
       - ./output_files:/app/output_files
     environment:
       - PYTHONUNBUFFERED=1
+    cap_drop:
+      - ALL  # Drop all capabilities from the container
+    security_opt:
+      - no-new-privileges:true
+    read_only: true  # Make the container's filesystem read-only
     restart: unless-stopped
 
   website:
