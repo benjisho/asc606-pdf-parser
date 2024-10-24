@@ -35,7 +35,7 @@ services:
 
   clamav:
     image: mkodockx/docker-clamav:latest
+    command: ["freshclam", "&&", "clamd"]
     volumes:
-      - ./pdf_files_to_parse:/scan  # ClamAV scans files in this directory
-    command: "clamd"  # Start ClamAV daemon
+      - ./pdf_files_to_parse:/scan
     restart: unless-stopped
