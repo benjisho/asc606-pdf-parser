@@ -11,17 +11,19 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     cap_drop:
-      - ALL  # Drop all capabilities from the container
+      - ALL
     security_opt:
       - no-new-privileges:true
     read_only: true  # Make the container's filesystem read-only
     restart: unless-stopped
+    depends_on:  # Ensure the ClamAV service is ready before starting the parser
+      - clamav
 
   website:
     image: benjisho/asc606-pdf-parser-website:v1.0.1
     build:
-      context: ./asc606-pdf-parser-website  # Context for building the website
-      dockerfile: Dockerfile.website  # Dockerfile for the website
+      context: ./asc606-pdf-parser-website
+      dockerfile: Dockerfile.website
     volumes:
       - ./asc606-pdf-parser-website:/app/asc606-pdf-parser-website
       - ./asc606-pdf-parser-app:/app/asc606-pdf-parser-app
@@ -29,4 +31,11 @@ services:
       - ./output_files:/app/output_files
     ports:
       - "5000:5000"
+    restart: unless-stopped
+
+  clamav:
+    image: mkodockx/docker-clamav:latest
+    volumes:
+      - ./pdf_files_to_parse:/scan  # ClamAV scans files in this directory
+    command: "clamd"  # Start ClamAV daemon
     restart: unless-stopped
