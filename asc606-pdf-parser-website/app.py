@@ -1,5 +1,6 @@
 import os
 import mimetypes
+import subprocess
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 import clamd  # For communicating with the ClamAV daemon
 import PyPDF2  # For verifying the file is a valid PDF
@@ -17,6 +18,19 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Set up logging to capture more information about ClamAV issues
 logging.basicConfig(level=logging.INFO)
 
+# Optional ClamAV setup - attempt to connect to ClamAV if available
+def connect_to_clamav():
+    try:
+        cd = clamd.ClamdNetworkSocket(host='clamav', port=3310)
+        cd.ping()  # Ping to ensure ClamAV is reachable
+        logging.info("Connected to ClamAV")
+        return cd
+    except Exception as e:
+        logging.warning(f"ClamAV not available: {e}")
+        return None
+
+clamav_client = connect_to_clamav()  # Try to establish connection at app startup
+
 # Function to check if file extension is allowed
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -30,27 +44,25 @@ def is_valid_pdf(file_path):
     except (PyPDF2.errors.PdfReadError, FileNotFoundError, IsADirectoryError):
         return False
 
-# Function to scan file with ClamAV daemon
+# Function to scan file with ClamAV if available
 def scan_with_clamav(file_path):
-    try:
-        cd = clamd.ClamdNetworkSocket(host='clamav', port=3310)  # Connect to the ClamAV container via network socket
-        result = cd.scan(file_path)  # Scan the file
-        logging.info(f"ClamAV scan result: {result}")  # Log the scan result
-        
-        if result is None:
-            logging.error("ClamAV returned None. Could not scan the file.")
-            return False
+    if clamav_client:
+        try:
+            result = clamav_client.scan(file_path)
+            logging.info(f"ClamAV scan result: {result}")  # Log the scan result
+            
+            if result is None:
+                logging.warning("ClamAV scan result is None. Skipping scan.")
+                return True
 
-        # Ensure the scan result is correctly interpreted
-        scan_result = result.get(file_path)
-        if scan_result and scan_result[0] == 'OK':
-            return True  # File is clean
-        else:
-            logging.error(f"ClamAV scan failed or detected an issue: {scan_result}")
-            return False  # File is infected or there was an issue
-    except Exception as e:
-        logging.error(f"ClamAV scan failed: {e}")
-        return False
+            scan_result = result.get(file_path)
+            return scan_result and scan_result[0] == 'OK'
+        except Exception as e:
+            logging.error(f"ClamAV scan failed: {e}")
+            return False
+    else:
+        logging.info("ClamAV is not available, skipping virus scan.")
+        return True  # Assume clean if ClamAV is unavailable
 
 @app.route('/')
 def index():
@@ -76,7 +88,7 @@ def upload_file():
         # Set file permissions to read and write for the owner, no execute permissions
         os.chmod(file_path, 0o600)
 
-        # Step 2: Scan the uploaded file with ClamAV daemon for viruses
+        # Step 2: Scan the uploaded file with ClamAV daemon for viruses, if available
         if not scan_with_clamav(file_path):
             shutil.rmtree(temp_dir)  # Remove temp directory and file
             return render_template('index.html', error_message="File contains a virus or could not be scanned!")

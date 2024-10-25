@@ -16,9 +16,6 @@ services:
       - no-new-privileges:true
     read_only: true
     restart: unless-stopped
-    depends_on:
-      clamav:
-        condition: service_healthy
 
   website:
     image: benjisho/asc606-pdf-parser-website:v1.0.1
@@ -32,29 +29,4 @@ services:
       - ./output_files:/app/output_files
     ports:
       - "5000:5000"
-    depends_on:
-      clamav:
-        condition: service_healthy
     restart: unless-stopped
-
-  clamav:
-    build:
-      context: ./virus-protection/clamav
-      dockerfile: Dockerfile.clamav
-    volumes:
-      - ./virus-protection/clamav/freshclam.conf:/etc/clamav/freshclam.conf
-      - ./pdf_files_to_parse:/scan
-      - ./virus-protection/clamav/clamav_logs:/var/log/clamav
-      - clamav_db:/var/lib/clamav
-    ports:
-      - "3310:3310"
-    command: clamd --debug
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "clamdscan --version || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-volumes:
-  clamav_db:  # Persistent volume for ClamAV's database

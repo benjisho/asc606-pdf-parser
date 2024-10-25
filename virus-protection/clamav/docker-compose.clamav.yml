@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  clamav:
+    build:
+      context: ./virus-protection/clamav
+      dockerfile: Dockerfile.clamav
+    volumes:
+      - ./virus-protection/clamav/freshclam.conf:/etc/clamav/freshclam.conf
+      - ../../pdf_files_to_parse:/scan  # Adjust path to match the location relative to clamav directory
+      - ./clamav_logs:/var/log/clamav  # Logs for ClamAV
+      - clamav_db:/var/lib/clamav  # Persistent volume for ClamAV database
+    ports:
+      - "3310:3310"  # Expose ClamAV daemon's port for communication
+    command: clamd --debug
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "clamdscan --version || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 4g  # Allocate memory limit for ClamAV
+
+volumes:
+  clamav_db:  # Persistent volume for ClamAV database

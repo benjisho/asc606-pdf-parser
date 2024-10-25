@@ -1,3 +1,6 @@
+Here's the updated README with the new `docker compose` command under Option 3:
+
+```markdown
 # ASC 606 PDF Parser
 
 This project provides a Python script to parse PDF files and extract relevant information. The script processes PDF documents in a specified directory and writes the results to text files for easy reference.
@@ -15,6 +18,7 @@ This project provides a Python script to parse PDF files and extract relevant in
 - [**Option 1** Running the Script regularly](#option-1-running-the-script-regularly)
 - [**Option 2** Using Docker](#option-2-using-docker)
 - [**Option 3 Preferred** Running with Docker Compose](#option-3-preferred-running-with-docker-compose)
+  - [Running the website with builtin Antivirus (requires minimun 4g RAM)](#running-the-website-with-builtin-antivirus-requires-minimun-4g-ram)
 - [Logging](#logging)
 
 [Notes](#notes)
@@ -102,7 +106,14 @@ docker compose run --rm --build website
 docker compose run --rm --build asc606-pdf-parser
 ```
 
-This command will build the container image and start the service, removing intermediate containers after they stop.
+#### Running the website with builtin Antivirus (requires minimun 4g RAM)
+If you also want to run the ClamAV service along with the `website` service, you can use:
+
+```bash
+docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml up --build website clamav
+```
+
+This command specifies both files, bringing up both the `website` and `clamav` services together, making virus scanning functionality available.
 
 ## Logging
 
@@ -116,3 +127,6 @@ By default, it uses the `INFO` logging level, but you can enable `DEBUG` logging
 ## License
 
 This project is provided under the MIT License.
+```
+
+This update includes the new Docker Compose command, which is useful when you need both `clamav` and `website` running together.
