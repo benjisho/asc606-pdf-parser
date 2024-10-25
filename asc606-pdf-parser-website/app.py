@@ -1,5 +1,5 @@
 import os
-import mimetypes
+import time
 import subprocess
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 import clamd  # For communicating with the ClamAV daemon
@@ -18,16 +18,44 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Set up logging to capture more information about ClamAV issues
 logging.basicConfig(level=logging.INFO)
 
-# Optional ClamAV setup - attempt to connect to ClamAV if available
-def connect_to_clamav():
+def is_clamav_container_present():
+    """Check if the ClamAV container is running."""
     try:
-        cd = clamd.ClamdNetworkSocket(host='clamav', port=3310)
-        cd.ping()  # Ping to ensure ClamAV is reachable
-        logging.info("Connected to ClamAV")
-        return cd
+        result = subprocess.run(
+            ["ping", "-c", "1", "asc606-pdf-parser-clamav-1"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False
+        )
+        if result.returncode == 0:
+            logging.info("ClamAV container detected.")
+            return True
+        else:
+            logging.info("No ClamAV container detected.")
+            return False
     except Exception as e:
-        logging.warning(f"ClamAV not available: {e}")
-        return None
+        logging.error(f"Error checking for ClamAV container: {e}")
+        return False
+
+def connect_to_clamav():
+    """Attempt to connect to ClamAV if the container exists."""
+    if not is_clamav_container_present():
+        logging.info("ClamAV is not running. Starting website service without antivirus scanning.")
+        return None  # Return None if ClamAV container is not present
+
+    # If ClamAV container is detected, attempt to connect
+    max_attempts = 5
+    for attempt in range(max_attempts):
+        try:
+            cd = clamd.ClamdNetworkSocket(host='clamav', port=3310)
+            cd.ping()  # Ping to ensure ClamAV is reachable
+            logging.info("Connected to ClamAV")
+            return cd
+        except Exception as e:
+            logging.warning(f"Attempt {attempt + 1}/{max_attempts}: ClamAV not available. Retrying in 5 seconds... {e}")
+            time.sleep(5)
+    logging.error("ClamAV is not available after retries. Continuing without virus scanning.")
+    return None  # Return None if ClamAV is unreachable after retries
 
 clamav_client = connect_to_clamav()  # Try to establish connection at app startup
 
@@ -46,14 +74,14 @@ def is_valid_pdf(file_path):
 
 # Function to scan file with ClamAV if available
 def scan_with_clamav(file_path):
-    if clamav_client:
+    if clamav_client:  # Only scan if ClamAV is available
         try:
             result = clamav_client.scan(file_path)
-            logging.info(f"ClamAV scan result: {result}")  # Log the scan result
+            logging.info(f"ClamAV scan result: {result}")
             
             if result is None:
-                logging.warning("ClamAV scan result is None. Skipping scan.")
-                return True
+                logging.warning("ClamAV scan returned None. Skipping scan.")
+                return True  # Assume clean if no scan result
 
             scan_result = result.get(file_path)
             return scan_result and scan_result[0] == 'OK'
