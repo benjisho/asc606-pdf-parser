@@ -6,7 +6,7 @@ services:
       context: ./asc606-pdf-parser-app
       dockerfile: Dockerfile.pdf-parser
     volumes:
-      - ./pdf_files_to_parse:/app/pdf_files_to_parse:ro  # Read-only mount
+      - ./pdf_files_to_parse:/app/pdf_files_to_parse:ro  # Read-only mount for the parser
       - ./output_files:/app/output_files
     environment:
       - PYTHONUNBUFFERED=1
@@ -14,10 +14,10 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
-    read_only: true  # Make the container's filesystem read-only
+    read_only: true
     restart: unless-stopped
-    depends_on:  # Ensure the ClamAV service is ready before starting the parser
-      - clamav
+    depends_on:
+      - clamav  # Ensure the ClamAV service is ready before starting the parser
 
   website:
     image: benjisho/asc606-pdf-parser-website:v1.0.1
@@ -34,8 +34,18 @@ services:
     restart: unless-stopped
 
   clamav:
-    image: mkodockx/docker-clamav:latest
-    command: ["freshclam", "&&", "clamd"]
+    build:
+      context: ./virus-protection/clamav
+      dockerfile: Dockerfile.clamav
     volumes:
-      - ./pdf_files_to_parse:/scan
+      - ./virus-protection/clamav/freshclam.conf:/etc/clamav/freshclam.conf
+      - ./pdf_files_to_parse:/scan  # Directory for files to be scanned
+      - ./virus-protection/clamav/clamav_logs:/var/log/clamav  # Mount ClamAV logs to a local directory
+      - clamav_db:/var/lib/clamav  # Volume for ClamAV's database
+    ports:
+      - "3310:3310"  # Expose ClamAV daemon's port for network communication
+    command: clamd --debug  # Run ClamAV in debug mode
     restart: unless-stopped
+
+volumes:
+  clamav_db:  # Persistent volume for ClamAV's database

@@ -1,0 +1,17 @@
+# Base image for ClamAV
+FROM clamav/clamav:latest
+
+# Set working directory
+WORKDIR /etc/clamav
+
+# Copy freshclam configuration to update the virus database
+COPY ./freshclam.conf /etc/clamav/freshclam.conf
+
+# Update the virus database
+RUN freshclam  # Ensure the database is updated
+
+# Expose the ClamAV service port for communication
+EXPOSE 3310
+
+# Run the ClamAV daemon in debug mode to see detailed logs
+CMD ["clamd", "--foreground", "--log=/var/log/clamav/clamd.log", "--debug"]
