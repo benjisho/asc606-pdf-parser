@@ -17,7 +17,8 @@ services:
     read_only: true
     restart: unless-stopped
     depends_on:
-      - clamav  # Ensure the ClamAV service is ready before starting the parser
+      clamav:
+        condition: service_healthy
 
   website:
     image: benjisho/asc606-pdf-parser-website:v1.0.1
@@ -31,6 +32,9 @@ services:
       - ./output_files:/app/output_files
     ports:
       - "5000:5000"
+    depends_on:
+      clamav:
+        condition: service_healthy
     restart: unless-stopped
 
   clamav:
@@ -39,13 +43,18 @@ services:
       dockerfile: Dockerfile.clamav
     volumes:
       - ./virus-protection/clamav/freshclam.conf:/etc/clamav/freshclam.conf
-      - ./pdf_files_to_parse:/scan  # Directory for files to be scanned
-      - ./virus-protection/clamav/clamav_logs:/var/log/clamav  # Mount ClamAV logs to a local directory
-      - clamav_db:/var/lib/clamav  # Volume for ClamAV's database
+      - ./pdf_files_to_parse:/scan
+      - ./virus-protection/clamav/clamav_logs:/var/log/clamav
+      - clamav_db:/var/lib/clamav
     ports:
-      - "3310:3310"  # Expose ClamAV daemon's port for network communication
-    command: clamd --debug  # Run ClamAV in debug mode
+      - "3310:3310"
+    command: clamd --debug
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "clamdscan --version || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   clamav_db:  # Persistent volume for ClamAV's database

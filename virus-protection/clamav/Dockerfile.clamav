@@ -8,10 +8,10 @@ WORKDIR /etc/clamav
 COPY ./freshclam.conf /etc/clamav/freshclam.conf
 
 # Update the virus database
-RUN freshclam  # Ensure the database is updated
+RUN freshclam
 
 # Expose the ClamAV service port for communication
 EXPOSE 3310
 
-# Run the ClamAV daemon in debug mode to see detailed logs
-CMD ["clamd", "--foreground", "--log=/var/log/clamav/clamd.log", "--debug"]
+# Run the ClamAV daemon
+CMD ["clamd", "--foreground", "--log=/var/log/clamav/clamd.log"]  # Keep clamd in the foreground for logging

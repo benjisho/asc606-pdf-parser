@@ -14,6 +14,9 @@ OUTPUT_FOLDER = '/app/output_files'
 ALLOWED_EXTENSIONS = {'pdf'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Set up logging to capture more information about ClamAV issues
+logging.basicConfig(level=logging.INFO)
+
 # Function to check if file extension is allowed
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -34,16 +37,16 @@ def scan_with_clamav(file_path):
         result = cd.scan(file_path)  # Scan the file
         logging.info(f"ClamAV scan result: {result}")  # Log the scan result
         
-        # Debug output to check exact response
         if result is None:
             logging.error("ClamAV returned None. Could not scan the file.")
             return False
 
-        # Check if the result indicates the file is clean
-        if file_path in result and result[file_path][0] == 'OK':
+        # Ensure the scan result is correctly interpreted
+        scan_result = result.get(file_path)
+        if scan_result and scan_result[0] == 'OK':
             return True  # File is clean
         else:
-            logging.error(f"ClamAV scan failed or detected an issue: {result}")
+            logging.error(f"ClamAV scan failed or detected an issue: {scan_result}")
             return False  # File is infected or there was an issue
     except Exception as e:
         logging.error(f"ClamAV scan failed: {e}")
