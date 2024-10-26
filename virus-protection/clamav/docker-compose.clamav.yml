@@ -16,7 +16,7 @@ services:
     volumes:
       - ./virus-protection/clamav/freshclam.conf:/etc/clamav/freshclam.conf
       - ./pdf_files_to_parse:/scan  # Mount pdf_files_to_parse directly to /scan
-      - ./logs/clamav/clamav_logs:/var/log/clamav
+      - ./virus-protection/clamav/clamav_logs:/var/log/clamav
       - clamav_db:/var/lib/clamav  # Persistent volume for ClamAV database
     ports:
       - "3310:3310"  # Expose ClamAV daemon's port for communication

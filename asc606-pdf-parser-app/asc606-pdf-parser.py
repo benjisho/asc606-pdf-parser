@@ -14,8 +14,10 @@ args = parser.parse_args()
 # Configure logging
 logging_level = logging.DEBUG if args.debug else logging.INFO
 logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
-# Add file handler to retain logs for future reference
-os.makedirs('/app/logs', exist_ok=True)  # This line creates the logs directory if it does not exist
+# Ensure the logs directory exists
+os.makedirs('/app/logs', exist_ok=True)
+
+# Set up logging to a file within the writable logs directory
 file_handler = logging.FileHandler('/app/logs/asc606_pdf_parser.log')
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logging.getLogger().addHandler(file_handler)
