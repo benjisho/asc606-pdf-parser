@@ -8,14 +8,14 @@ services:
     volumes:
       - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
-      - ./logs:/app/logs
+      - ./asc606-pdf-parser-app/logs:/app/logs  # Ensure this directory is writable on the host machine
     environment:
       - PYTHONUNBUFFERED=1
     cap_drop:
       - ALL
     security_opt:
       - no-new-privileges:true
-    read_only: true
+    read_only: true  # Retain read-only for added security
     restart: unless-stopped
 
   website:

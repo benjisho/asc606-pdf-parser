@@ -16,11 +16,11 @@ logging_level = logging.DEBUG if args.debug else logging.INFO
 logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
 # Ensure the logs directory exists
 os.makedirs('/app/logs', exist_ok=True)
-
-# Set up logging to a file within the writable logs directory
 file_handler = logging.FileHandler('/app/logs/asc606_pdf_parser.log')
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logging.getLogger().addHandler(file_handler)
+logging.getLogger().setLevel(logging.INFO)  # Adjust logging level if needed
+
 
 # Step 1: Extract text from PDF using PyMuPDF
 
