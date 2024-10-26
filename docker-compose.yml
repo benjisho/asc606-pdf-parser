@@ -8,7 +8,6 @@ services:
     volumes:
       - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
-      - ./asc606-pdf-parser-app/logs:/app/logs
     tmpfs:
       - /app/logs
     environment:
