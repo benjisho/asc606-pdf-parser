@@ -1,6 +1,5 @@
-import logging, os
+import logging, os, re
 import subprocess
-import re
 import pymupdf  # Import pymupdf from PyMuPDF
 import argparse
 from collections import defaultdict
