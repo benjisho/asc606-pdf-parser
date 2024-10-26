@@ -11,11 +11,11 @@ services:
       # - ./asc606-pdf-parser-app/logs:/app/logs:rw # Ensure this directory is writable on the host machine
     environment:
       - PYTHONUNBUFFERED=1
-    cap_drop:
-      - ALL
+    # cap_drop:
+    #   - ALL
     security_opt:
       - no-new-privileges:true
-    # read_only: true  # Retain read-only for added security
+    read_only: true  # Retain read-only for added security
     restart: unless-stopped
 
   website:
