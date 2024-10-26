@@ -7,12 +7,10 @@ services:
       dockerfile: Dockerfile.pdf-parser
     volumes:
       - ./pdf_files_to_parse:/app/pdf_files_to_parse
-      - ./output_files:/app/output_files
-      # - ./asc606-pdf-parser-app/logs:/app/logs:rw # Ensure this directory is writable on the host machine
+      - ./output_files:/app/output_files:ro
+      - ./asc606-pdf-parser-app/logs:/app/logs # Ensure this directory is writable on the host machine
     environment:
       - PYTHONUNBUFFERED=1
-    # cap_drop:
-    #   - ALL
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
