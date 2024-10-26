@@ -8,6 +8,7 @@ services:
     volumes:
       - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
+      - ./logs:/app/logs
     environment:
       - PYTHONUNBUFFERED=1
     cap_drop:

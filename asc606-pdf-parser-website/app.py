@@ -125,11 +125,13 @@ def upload_file():
         # Step 4: Parse the PDF
         subprocess.run(['python3', '/app/asc606-pdf-parser-app/asc606-pdf-parser.py'], check=True)
 
-        # Step 5: Output the result file
+        # Step 5: Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
-        return render_template('index.html', output_file=output_file)
+        success_message = "No viruses found. Parsing PDF..."
+        return render_template('index.html', output_file=output_file, success_message=success_message)
     else:
         return render_template('index.html', error_message="File type not allowed. Only PDF files are accepted.")
+
 
 @app.route('/download/<filename>')
 def download_file(filename):
