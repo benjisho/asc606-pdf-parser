@@ -1,42 +1,36 @@
-Here's the updated README with the new `docker compose` command under Option 3:
-
-```markdown
 # ASC 606 PDF Parser
 
-This project provides a Python script to parse PDF files and extract relevant information. The script processes PDF documents in a specified directory and writes the results to text files for easy reference.
+This project provides a Python script and web-based service to parse PDF files, extract relevant information, and save the results to text files. It also includes optional ClamAV antivirus scanning for uploaded PDF files.
 
 ## Table of Contents
-[Features](#features)
-
-[Prerequisites](#prerequisites)
-
-[Directory Structure](#directory-structure)
-
-[Usage](#usage)
-- [Before Your Run the Code](#before-your-run-the-code)
-- [Command Line Arguments](#command-line-arguments)
-- [**Option 1** Running the Script regularly](#option-1-running-the-script-regularly)
-- [**Option 2** Using Docker](#option-2-using-docker)
-- [**Option 3 Preferred** Running with Docker Compose](#option-3-preferred-running-with-docker-compose)
-  - [Running the website with builtin Antivirus (requires minimun 4g RAM)](#running-the-website-with-builtin-antivirus-requires-minimun-4g-ram)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Directory Structure](#directory-structure)
+- [Usage](#usage)
+  - [Before You Run the Code](#before-you-run-the-code)
+  - [Command Line Arguments](#command-line-arguments)
+  - [Option 1: Running the Script Locally](#option-1-running-the-script-locally)
+  - [Option 2: Running with Docker](#option-2-running-with-docker)
+  - [Option 3: Preferred Running with Docker Compose](#option-3-preferred-running-with-docker-compose)
+    - [OPTIONAL: Enabling Antivirus Scanning in Docker Compose](#optional-enabling-antivirus-scanning-in-docker-compose)
 - [Logging](#logging)
-
-[Notes](#notes)
-
-[License](#license)
+- [Notes](#notes)
+- [License](#license)
 
 ## Features
 
-- Extract text from PDF files using PyMuPDF.
-- Output summaries to text files.
-- Optional `--debug` flag for additional detailed logging.
+- Extracts text from PDF files using PyMuPDF.
+- Outputs parsed information to organized text files.
+- Optional antivirus scanning using ClamAV.
+- Optional `--debug` flag for detailed logging.
 
 ## Prerequisites
 
 - Python 3.6+
 - PyMuPDF library (`pymupdf`)
+- (Optional) Docker if using containerized deployment
 
-To install the required dependencies, run:
+Install dependencies using:
 
 ```bash
 pip install -r requirements.txt
@@ -44,42 +38,40 @@ pip install -r requirements.txt
 
 ## Directory Structure
 
-- `pdf_files_to_parse/`: Directory containing the PDF files to be processed.
-- `output_files/`: Directory where the extracted summaries will be saved.
+- `pdf_files_to_parse/`: Directory containing PDF files to process.
+- `output_files/`: Directory where extracted summaries are saved.
 
 ## Usage
 
-### Before Your Run the Code
+### Before You Run the Code
 
-1. Place all PDF files that you want to process in the `pdf_files_to_parse` directory.
-2. Run the script as described in the "Usage" section.
-3. Check the `output_files` directory for the generated text files containing summaries of the extracted information.
+1. Place PDFs for processing in `pdf_files_to_parse`.
+2. Run the script or use Docker commands below.
+3. Check `output_files` for generated text summaries.
 
 ### Command Line Arguments
 
-- You may add `--debug`: Enable detailed debug logging for troubleshooting purposes.
+- `--debug`: Enable detailed debug logging.
 
-### **Option 1** Running the Script regularly
+### Option 1: Running the Script Locally
 
-To run the script, execute the following command:
+To run the script directly:
 
 ```bash
 python ./asc606-pdf-parser-app/asc606-pdf-parser.py
 ```
 
-If you want to enable detailed debug logging, use:
+With debug logging:
 
 ```bash
 python ./asc606-pdf-parser-app/asc606-pdf-parser.py --debug
 ```
 
-The script will process all PDF files in the `pdf_files_to_parse` directory and save the summary outputs to the `output_files` directory.
+The script will process PDFs in `pdf_files_to_parse` and output summaries to `output_files`.
 
-### **Option 2** Using Docker
+### Option 2: Running with Docker
 
-The Docker container for this project is accessible via Docker Hub.
-
-To run the pdf-parser container with Docker:
+To run the `pdf-parser` container alone:
 
 ```bash
 docker run --rm \
@@ -89,44 +81,42 @@ docker run --rm \
   benjisho/asc606-pdf-parser:latest
 ```
 
-### **Option 3 Preferred** Running with Docker Compose
+### Option 3: Preferred Running with Docker Compose
 
-To use Docker Compose to run the container, use the following command:
+For ease of use, Docker Compose can build and manage the containerized application:
 
 ```bash
-# Build both 
+# Build both website and parser containers
 docker compose build website asc606-pdf-parser
 
-# Using through a web interface service
-docker-compose up -d --build website
-# Testing the website before running as -d (detached)
+# Run the website service in detached mode (unsafe for production)
+docker compose up -d --build website
+# Or test website with
 docker compose run --rm --build website
 
-# Using the asc606-pdf-parser directly (easiest and fastest)
+# Run asc606-pdf-parser directly (quickest for command-line parsing)
 docker compose run --rm --build asc606-pdf-parser
 ```
 
-#### Running the website with builtin Antivirus (requires minimun 4g RAM)
-If you also want to run the ClamAV service along with the `website` service, you can use:
+#### OPTIONAL: Enabling Antivirus Scanning in Docker Compose
+
+For enhanced security, you can enable ClamAV to scan uploaded files in the `website` service:
 
 ```bash
-docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml up --build website clamav
+docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml up --build website clamav -d
 ```
 
-This command specifies both files, bringing up both the `website` and `clamav` services together, making virus scanning functionality available.
+> **Note:** ClamAV takes a few moments to initialize. The web application will automatically attempt to connect to ClamAV, retrying until ClamAV is available for scans.
 
 ## Logging
 
-By default, it uses the `INFO` logging level, but you can enable `DEBUG` logging by using the `--debug` flag.
+Logging is set to `INFO` by default, but you can enable `DEBUG` with the `--debug` flag.
 
 ## Notes
 
-- Ensure that the `pdf_files_to_parse` directory exists and contains valid PDF files for processing.
-- Summaries for each processed PDF will be saved in the `output_files` directory with the same name as the PDF file but with a `.txt` extension.
+- Ensure `pdf_files_to_parse` directory exists with valid PDF files.
+- Processed PDF summaries are saved to `output_files` with `.txt` extensions.
 
 ## License
 
 This project is provided under the MIT License.
-```
-
-This update includes the new Docker Compose command, which is useful when you need both `clamav` and `website` running together.
