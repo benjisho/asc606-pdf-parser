@@ -15,7 +15,6 @@ services:
     #   - ALL
     security_opt:
       - no-new-privileges:true
-    read_only: true  # Retain read-only for added security
     restart: unless-stopped
 
   website:

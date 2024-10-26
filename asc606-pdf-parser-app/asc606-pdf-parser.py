@@ -1,5 +1,7 @@
-import os, re
+import logging
+import os
 import subprocess
+import re
 import pymupdf  # Import pymupdf from PyMuPDF
 import argparse
 from collections import defaultdict
@@ -9,14 +11,11 @@ parser = argparse.ArgumentParser(description="Process PDF files and extract rele
 parser.add_argument('--debug', action='store_true', help="Enable debug logging")
 args = parser.parse_args()
 
-# Set logs directory
-logs_directory = '/app/logs'
-os.makedirs(logs_directory, exist_ok=True)  # Ensure the logs directory exists
-
-import logging
-# Configure logging to use the correct writable directory
-log_file_path = os.path.join(logs_directory, 'asc606_pdf_parser.log')
-file_handler = logging.FileHandler(log_file_path)
+# Configure logging
+logging_level = logging.DEBUG if args.debug else logging.INFO
+logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
+# Add file handler to retain logs for future reference
+file_handler = logging.FileHandler('asc606_pdf_parser.log')
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logging.getLogger().addHandler(file_handler)
 logging.getLogger().setLevel(logging.INFO)
