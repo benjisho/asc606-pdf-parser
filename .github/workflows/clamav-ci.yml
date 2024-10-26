@@ -1,0 +1,50 @@
+name: ClamAV Service Test
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'asc606-pdf-parser/virus-protection/clamav/**'
+
+jobs:
+  clamav-check:
+    runs-on: ubuntu-latest
+    services:
+      clamav:
+        image: clamav/clamav:latest
+        options: >-
+          --health-cmd="clamdscan --version || exit 1"
+          --health-interval=30s
+          --health-timeout=10s
+          --health-retries=5
+        ports:
+          - 3310:3310  # Port for ClamAV daemon
+
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Download Dummy PDF
+      run: wget -q -O dummy.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+
+    - name: Start ClamAV Container
+      run: docker-compose -f asc606-pdf-parser/virus-protection/clamav/docker-compose.clamav.yml up -d clamav
+
+    - name: Wait for ClamAV to Initialize
+      run: |
+        echo "Waiting for ClamAV service to be healthy..."
+        until [ "`docker inspect -f {{.State.Health.Status}} clamav`" == "healthy" ]; do
+          sleep 5;
+        done
+      shell: bash
+
+    - name: Test ClamAV Scanning on Dummy PDF
+      run: |
+        clamdscan --fdpass dummy.pdf | tee scan_output.log
+        if grep -q "OK$" scan_output.log; then
+          echo "ClamAV scan passed successfully!"
+        else
+          echo "ClamAV scan failed!" && exit 1
+        fi
+      shell: bash
