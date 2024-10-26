@@ -1,5 +1,4 @@
-import logging
-import os
+import logging, os
 import subprocess
 import re
 import pymupdf  # Import pymupdf from PyMuPDF
@@ -14,13 +13,14 @@ args = parser.parse_args()
 # Configure logging
 logging_level = logging.DEBUG if args.debug else logging.INFO
 logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
-# Ensure the logs directory exists
-os.makedirs('/app/logs', exist_ok=True)
-file_handler = logging.FileHandler('/app/logs/asc606_pdf_parser.log')
+# Ensure logs directory exists and set writable permissions if necessary
+logs_directory = '/app/logs'
+os.makedirs(logs_directory, exist_ok=True)
+
+# Configure logging to a file in the writable logs directory
+file_handler = logging.FileHandler(f'{logs_directory}/asc606_pdf_parser.log')
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logging.getLogger().addHandler(file_handler)
-logging.getLogger().setLevel(logging.INFO)  # Adjust logging level if needed
-
 
 # Step 1: Extract text from PDF using PyMuPDF
 
