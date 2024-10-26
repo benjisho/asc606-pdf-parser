@@ -21,10 +21,10 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Setup writable logs directory
-      run: |
-        mkdir -p asc606-pdf-parser-app/logs
-        chmod -R 777 asc606-pdf-parser-app/logs
+    # - name: Ensure Logs Directory Writable
+    #   run: |
+    #     mkdir -p asc606-pdf-parser-app/logs
+    #     chmod -R 777 asc606-pdf-parser-app/logs  # Confirm writable permissions
         
     - name: Install Expect
       run: sudo apt-get update && sudo apt-get install -y expect

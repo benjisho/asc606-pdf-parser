@@ -6,16 +6,16 @@ services:
       context: ./asc606-pdf-parser-app
       dockerfile: Dockerfile.pdf-parser
     volumes:
-      - ./pdf_files_to_parse:/app/pdf_files_to_parse:ro  # Read-only access to uploaded PDFs
-      - ./output_files:/app/output_files:rw              # Writable access for output files only
-      - ./asc606-pdf-parser-app/logs:/app/logs:rw        # Writable access for logs
+      - ./pdf_files_to_parse:/app/pdf_files_to_parse
+      - ./output_files:/app/output_files
+      - ./asc606-pdf-parser-app/logs:/app/logs:rw # Ensure this directory is writable on the host machine
     environment:
       - PYTHONUNBUFFERED=1
     cap_drop:
       - ALL
     security_opt:
       - no-new-privileges:true
-    read_only: true  # Keep the main file system read-only
+    # read_only: true  # Retain read-only for added security
     restart: unless-stopped
 
   website:
