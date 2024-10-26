@@ -6,7 +6,7 @@ services:
       context: ./asc606-pdf-parser-app
       dockerfile: Dockerfile.pdf-parser
     volumes:
-      - ./pdf_files_to_parse:/app/pdf_files_to_parse:ro  # Read-only mount for the parser
+      - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
     environment:
       - PYTHONUNBUFFERED=1

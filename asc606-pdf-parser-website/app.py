@@ -70,16 +70,18 @@ def is_valid_pdf(file_path):
 
 # Function to scan file with ClamAV if available
 def scan_with_clamav(file_path):
+    clamav_scan_path = file_path.replace('/app/pdf_files_to_parse', '/scan')
     if clamav_client:  # Only scan if ClamAV is available
         try:
-            result = clamav_client.scan(file_path)
+            result = clamav_client.scan(clamav_scan_path)
             logging.info(f"ClamAV scan result: {result}")
             
             if result is None:
                 logging.warning("ClamAV scan returned None. Skipping scan.")
                 return True  # Assume clean if no scan result
 
-            scan_result = result.get(file_path)
+            # Match ClamAV response format by using clamav_scan_path as the key
+            scan_result = result.get(clamav_scan_path)
             return scan_result and scan_result[0] == 'OK'
         except Exception as e:
             logging.error(f"ClamAV scan failed: {e}")
@@ -103,32 +105,27 @@ def upload_file():
         return render_template('index.html', error_message="No selected file")
 
     if file and allowed_file(file.filename):
-        # Step 1: Upload the file to a temporary directory to isolate it
-        temp_dir = os.path.join('/tmp', file.filename)
-        os.makedirs(temp_dir, exist_ok=True)
-        file_path = os.path.join(temp_dir, file.filename)
+        # Step 1: Save the uploaded file directly to `pdf_files_to_parse`
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(file_path)
 
-        # Set file permissions to read and write for the owner, no execute permissions
-        os.chmod(file_path, 0o600)
+        # Set file permissions
+        os.chmod(file_path, 0o644)
 
         # Step 2: Scan the uploaded file with ClamAV daemon for viruses, if available
         if not scan_with_clamav(file_path):
-            shutil.rmtree(temp_dir)  # Remove temp directory and file
+            os.remove(file_path)  # Remove file if it's infected
             return render_template('index.html', error_message="File contains a virus or could not be scanned!")
 
         # Step 3: Check if the file is a valid PDF
         if not is_valid_pdf(file_path):
-            shutil.rmtree(temp_dir)  # Remove temp directory and file
+            os.remove(file_path)  # Remove invalid file
             return render_template('index.html', error_message="Invalid or corrupted PDF file")
 
-        # Step 4: Move the validated file to the upload directory for parsing
-        shutil.move(file_path, os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-        shutil.rmtree(temp_dir)  # Clean up temp directory after processing
-
-        # Step 5: Parse the PDF
+        # Step 4: Parse the PDF
         subprocess.run(['python3', '/app/asc606-pdf-parser-app/asc606-pdf-parser.py'], check=True)
 
+        # Step 5: Output the result file
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
         return render_template('index.html', output_file=output_file)
     else:
