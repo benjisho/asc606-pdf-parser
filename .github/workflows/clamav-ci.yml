@@ -9,6 +9,11 @@ on:
       - main
     paths:
       - 'asc606-pdf-parser/virus-protection/clamav/**'
+    paths-ignore:
+      - 'README.md'  # Ensure README changes don't trigger a rebuild
+      - 'LICENSE'  # License changes are unlikely to affect the Docker build
+      - '.gitignore'  # Gitignore changes shouldn't affect the image
+      - '.github/workflows/*'  # Changes to workflows should not trigger Docker image build
 
 jobs:
   clamav-check:
