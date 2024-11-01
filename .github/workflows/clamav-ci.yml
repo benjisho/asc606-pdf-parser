@@ -9,8 +9,8 @@ on:
       - main
     paths:
       - '.github/workflows/*clamav-ci.yml'
-      - 'asc606-pdf-parser/virus-protection/clamav/**'
-      - 'asc606-pdf-parser/asc606-pdf-parser-website/**'
+      - 'virus-protection/clamav/**'
+      - 'asc606-pdf-parser-website/**'
 
 jobs:
   clamav-check:
@@ -34,7 +34,7 @@ jobs:
       run: wget -q -O dummy.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
 
     - name: Start ClamAV Container
-      run: docker compose -f asc606-pdf-parser/virus-protection/clamav/docker-compose.clamav.yml up -d clamav
+      run: docker compose -f virus-protection/clamav/docker-compose.clamav.yml up -d clamav
 
     - name: Wait for ClamAV to Initialize
       run: |
