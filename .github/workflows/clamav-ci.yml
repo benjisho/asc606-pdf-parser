@@ -8,6 +8,7 @@ on:
     branches:
       - main
     paths:
+      - '.github/workflows/clamav-ci.yml'  # Changes to this workflow should trigger ci
       - 'asc606-pdf-parser/virus-protection/clamav/**'
     paths-ignore:
       - 'README.md'  # Ensure README changes don't trigger a rebuild
