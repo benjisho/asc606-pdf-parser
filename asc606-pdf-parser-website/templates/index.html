@@ -90,10 +90,14 @@
 
       <!-- Output Section -->
       <div id="output" class="mt-8 text-center">
+        {% if success_message %}
+        <p class="text-green-500 text-lg">{{ success_message }}</p>
+        {% endif %}
+        
         {% if output_file %}
         <p class="text-primary text-lg">Your PDF has been parsed! <a href="/download/{{ output_file }}" class="underline text-accent hover:text-accent/80">Click to download your text file here.</a></p>
         {% endif %}
-      </div>
+    </div>
     </div>
 
   </body>

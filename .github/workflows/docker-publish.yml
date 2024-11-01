@@ -19,7 +19,7 @@ env:
   DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}  # Docker Hub username stored in GitHub secrets
   DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}  # Docker Hub token stored in GitHub secrets
   DOCKER_REGISTRY: docker.io  # Docker registry URL
-  RELEASE_TAG: v1.0.1  # Release tag for versioning the Docker images
+  RELEASE_TAG: v1.1.0  # Release tag for versioning the Docker images
   
 # Define the jobs to build and publish the Docker images
 jobs:

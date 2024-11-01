@@ -18,6 +18,7 @@ logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %
 file_handler = logging.FileHandler('asc606_pdf_parser.log')
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logging.getLogger().addHandler(file_handler)
+logging.getLogger().setLevel(logging.INFO)
 
 # Step 1: Extract text from PDF using PyMuPDF
 

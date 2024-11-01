@@ -3,20 +3,23 @@ services:
   asc606-pdf-parser:
     image: benjisho/asc606-pdf-parser:v1.0.1
     build:
-      context: ./asc606-pdf-parser-app  # Context for building the parser image
-      dockerfile: Dockerfile.pdf-parser  # Correct Dockerfile for the parser
+      context: ./asc606-pdf-parser-app
+      dockerfile: Dockerfile.pdf-parser
     volumes:
       - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
+      - ./asc606-pdf-parser-app/logs:/app/logs # Ensure this directory is writable on the host machine
     environment:
       - PYTHONUNBUFFERED=1
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
 
   website:
     image: benjisho/asc606-pdf-parser-website:v1.0.1
     build:
-      context: ./asc606-pdf-parser-website  # Context for building the website
-      dockerfile: Dockerfile.website  # Dockerfile for the website
+      context: ./asc606-pdf-parser-website
+      dockerfile: Dockerfile.website
     volumes:
       - ./asc606-pdf-parser-website:/app/asc606-pdf-parser-website
       - ./asc606-pdf-parser-app:/app/asc606-pdf-parser-app
