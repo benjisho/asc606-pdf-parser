@@ -4,12 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - '.github/workflows/*clamav-ci.yml'
-      - 'asc606-pdf-parser/virus-protection/clamav/**'
-      - 'asc606-pdf-parser/asc606-pdf-parser-website/**'
-    paths-ignore:
-      - '**'
   pull_request:
     branches:
       - main
@@ -17,8 +11,6 @@ on:
       - '.github/workflows/*clamav-ci.yml'
       - 'asc606-pdf-parser/virus-protection/clamav/**'
       - 'asc606-pdf-parser/asc606-pdf-parser-website/**'
-    paths-ignore:
-      - '**'
 
 jobs:
   clamav-check:
