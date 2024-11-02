@@ -3,8 +3,8 @@ version: '3.8'
 services:
   clamav:
     build:
-      context: ./virus-protection/clamav
-      dockerfile: Dockerfile.clamav
+      context: ./
+      dockerfile: virus-protection/clamav/Dockerfile.clamav
     deploy:
       resources:
         limits:

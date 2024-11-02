@@ -5,7 +5,7 @@ FROM clamav/clamav:latest
 WORKDIR /etc/clamav
 
 # Copy freshclam configuration to update the virus database
-COPY ./freshclam.conf /etc/clamav/freshclam.conf
+COPY ./virus-protection/clamav/freshclam.conf /etc/clamav/freshclam.conf
 
 # Set ConcurrentDatabaseReload to no to minimize memory usage
 RUN echo "ConcurrentDatabaseReload no" >> /etc/clamav/clamd.conf
