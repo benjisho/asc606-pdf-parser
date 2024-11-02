@@ -53,10 +53,16 @@ jobs:
 
     - name: Test ClamAV Scanning on Dummy PDF
       run: |
-        clamdscan --fdpass dummy.pdf | tee scan_output.log
+        echo "Copying dummy.pdf into ClamAV container..."
+        docker cp pdf_files_to_parse/sample.pdf clamav-container:/scan/sample.pdf
+
+        echo "Running clamdscan inside the container..."
+        docker exec clamav-container clamdscan --fdpass /scan/sample.pdf | tee scan_output.log
+
         if grep -q "OK$" scan_output.log; then
           echo "ClamAV scan passed successfully!"
         else
           echo "ClamAV scan failed!" && exit 1
         fi
       shell: bash
+
