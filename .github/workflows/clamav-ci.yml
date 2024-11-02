@@ -40,18 +40,6 @@ jobs:
     - name: Ensure Docker Compose Services Are Stopped
       run: docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml down -v
 
-    - name: Stop Existing Containers Using Port 3310
-      run: |
-        docker ps --filter "publish=3310" --format "{{.ID}}" | xargs -r docker stop
-        docker ps -a --filter "publish=3310" --format "{{.ID}}" | xargs -r docker rm
-
-    - name: Wait for Port 3310 to Be Free
-      run: |
-        while sudo lsof -i :3310; do
-          echo "Port 3310 is still in use, waiting...";
-          sleep 5;
-        done
-  
     - name: Start ClamAV Container
       run: docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml up --build clamav -d
 
