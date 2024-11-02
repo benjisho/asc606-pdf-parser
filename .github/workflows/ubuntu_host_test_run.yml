@@ -4,14 +4,15 @@ on:
   push:
     branches:
       - main  # Trigger workflow on pushes to the main branch
+    paths:
+      - '.github/workflows/docker-publish.yml'
+      - 'asc606-pdf-parser-app/**'
   pull_request:
     branches: 
       - main 
-    paths-ignore:
-      - 'README.md'  # Ensure README changes don't trigger a rebuild
-      - 'LICENSE'  # License changes are unlikely to affect the build
-      - '.gitignore'  # Gitignore changes shouldn't affect the script
-      - '.github/workflows/*'  # Changes to workflows should not trigger a build
+    paths:
+      - '.github/workflows/docker-publish.yml'
+      - 'asc606-pdf-parser-app/**'
 
 jobs:
   host_interaction_test:
