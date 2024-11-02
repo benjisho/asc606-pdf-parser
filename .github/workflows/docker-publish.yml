@@ -5,16 +5,10 @@ on:
   push:
     branches:
       - main  # Trigger workflow on pushes to the main branch
-    paths-ignore:
-      - 'README.md'  # Ensure README changes don't trigger a rebuild
-      - 'LICENSE'  # License changes are unlikely to affect the Docker build
-      - '.dockerignore'  # Dockerignore changes generally won't affect the image content itself
-      - '.gitignore'  # Gitignore changes shouldn't affect the image
-      - '.github/workflows/**'  # Changes to workflows should not trigger Docker image build
-      - 'pdf_files_to_parse/**'  # Input files are dynamic and shouldn't trigger image rebuilds
-      - 'output_files/**'  # Output files shouldn't trigger image rebuilds
-
-      - '!.github/workflows/docker-publish.yml'  # Exclude this specific workflow
+    paths:
+      - '.github/workflows/*docker-publish.yml'
+      - 'asc606-pdf-parser-app/**'
+      - 'asc606-pdf-parser-website/**'
 
 # Define environment variables used throughout the workflow
 env:
