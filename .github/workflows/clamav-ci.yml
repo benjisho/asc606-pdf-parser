@@ -53,10 +53,7 @@ jobs:
         done
   
     - name: Start ClamAV Container
-      run: |
-        sudo lsof -i :3310
-        netstat -tulpn | grep 3310
-        docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml up --build clamav -d
+      run: docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml up --build clamav -d
 
     - name: Wait for ClamAV to Initialize
       run: |
