@@ -37,9 +37,6 @@ jobs:
           exit 1;
         }
 
-    - name: Ensure Docker Compose Services Are Stopped
-      run: docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml down -v
-
     - name: Start ClamAV Container
       run: docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml up --build clamav -d
 
@@ -65,4 +62,10 @@ jobs:
           echo "ClamAV scan failed!" && exit 1
         fi
       shell: bash
+
+    - name: Clear Workspace
+      run: |
+        docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml down -v
+        yes | docker system prune -a
+        
 
