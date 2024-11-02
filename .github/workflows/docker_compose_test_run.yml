@@ -9,10 +9,11 @@ on:
       - main 
     paths-ignore:
       - 'README.md'  # Ensure README changes don't trigger a rebuild
-      - 'LICENSE'  # License changes are unlikely to affect the Docker build
-      - '.gitignore'  # Gitignore changes shouldn't affect the image
-      - '.github/workflows/*'  # Changes to workflows should not trigger Docker image build
-
+      - 'LICENSE'  # License changes are unlikely to affect the build
+      - '.gitignore'  # Gitignore changes shouldn't affect the script
+      - '.github/workflows/*'  # Changes to workflows should not trigger a build
+      - 'pdf_files_to_parse/**'  # Input files are dynamic and shouldn't trigger image rebuilds
+      - 'output_files/**'  # Output files shouldn't trigger image rebuilds
 jobs:
   docker_compose_interaction_test:
     runs-on: ubuntu-24.04

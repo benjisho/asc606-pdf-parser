@@ -21,7 +21,7 @@ services:
     ports:
       - "3310:3310"  # Expose ClamAV daemon's port for communication
     healthcheck:
-      test: ["CMD-SHELL", "clamdscan --version || exit 1"]
+      test: ["CMD", "clamdscan", "--version"]
       interval: 30s
       timeout: 10s
       retries: 5
