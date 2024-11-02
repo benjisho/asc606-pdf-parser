@@ -40,9 +40,8 @@ jobs:
       run: |
         pwd
         ls -la
-        cd /home/runner/work/asc606-pdf-parser
-        pwd
-        ls -la
+        ls -la virus-protection
+        ls -la virus-protection/clamav
         docker compose -f virus-protection/clamav/docker-compose.clamav.yml up -d clamav
 
     - name: Wait for ClamAV to Initialize
