@@ -4,20 +4,19 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/workflows/alpine_host_test_run.yml'
+      - 'asc606-pdf-parser-app/**'
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - 'README.md'  # Ensure README changes don't trigger a rebuild
-      - 'LICENSE'  # License changes are unlikely to affect the build
-      - '.gitignore'  # Gitignore changes shouldn't affect the script
-      - '.github/workflows/*'  # Changes to workflows should not trigger a build
-      - 'pdf_files_to_parse/**'  # Input files are dynamic and shouldn't trigger image rebuilds
-      - 'output_files/**'  # Output files shouldn't trigger image rebuilds
-      
+    paths:
+      - '.github/workflows/alpine_host_test_run.yml'
+      - 'asc606-pdf-parser-app/**'
+
 jobs:
   alpine_host_test:
-    runs-on: ubuntu-latest  # Run on Ubuntu, which will then use an Alpine container for testing
+    runs-on: ubuntu-24.04
     container:
       image: alpine:3.20  # Use Alpine Linux container
 
