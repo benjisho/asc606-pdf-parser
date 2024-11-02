@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   clamav:
-    container_name: clamav
+    container_name: clamav-container
     build:
       context: ./
       dockerfile: virus-protection/clamav/Dockerfile.clamav
