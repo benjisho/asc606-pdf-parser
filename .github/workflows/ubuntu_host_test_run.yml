@@ -7,8 +7,8 @@ on:
   pull_request:
     branches: 
       - main 
-    paths-ignore:
-      - '.github/workflows/*docker-publish.yml'
+    paths:
+      - '.github/workflows/docker-publish.yml'
       - 'asc606-pdf-parser-app/**'
 
 jobs:

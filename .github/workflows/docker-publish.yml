@@ -6,7 +6,7 @@ on:
     branches:
       - main  # Trigger workflow on pushes to the main branch
     paths:
-      - '.github/workflows/*docker-publish.yml'
+      - '.github/workflows/docker-publish.yml'
       - 'asc606-pdf-parser-app/**'
       - 'asc606-pdf-parser-website/**'
 

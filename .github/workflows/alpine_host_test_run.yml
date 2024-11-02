@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/*alpine_host_test_run.yml'
+      - '.github/workflows/alpine_host_test_run.yml'
       - 'asc606-pdf-parser-app/**'
 
 jobs:

@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/*clamav-ci.yml'
+      - '.github/workflows/clamav-ci.yml'
       - 'virus-protection/clamav/**'
       - 'asc606-pdf-parser-website/**'
 
