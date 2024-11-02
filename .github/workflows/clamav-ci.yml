@@ -37,9 +37,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
     - name: Download Sample PDF
       run: |
         wget -q -O pdf_files_to_parse/sample.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf || {
@@ -47,20 +44,20 @@ jobs:
           exit 1;
         }
 
-    - name: Ensure Docker Compose Services Are Stopped
-      run: docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml down -v
+    # - name: Ensure Docker Compose Services Are Stopped
+    #   run: docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml down -v
 
-    - name: Stop Existing Containers Using Port 3310
-      run: |
-        docker ps --filter "publish=3310" --format "{{.ID}}" | xargs -r docker stop
-        docker ps -a --filter "publish=3310" --format "{{.ID}}" | xargs -r docker rm
+    # - name: Stop Existing Containers Using Port 3310
+    #   run: |
+    #     docker ps --filter "publish=3310" --format "{{.ID}}" | xargs -r docker stop
+    #     docker ps -a --filter "publish=3310" --format "{{.ID}}" | xargs -r docker rm
 
-    - name: Wait for Port 3310 to Be Free
-      run: |
-        while sudo lsof -i :3310; do
-          echo "Port 3310 is still in use, waiting...";
-          sleep 5;
-        done
+    # - name: Wait for Port 3310 to Be Free
+    #   run: |
+    #     while sudo lsof -i :3310; do
+    #       echo "Port 3310 is still in use, waiting...";
+    #       sleep 5;
+    #     done
   
     - name: Start ClamAV Container
       run: |
