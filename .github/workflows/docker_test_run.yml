@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main  # Trigger workflow on pushes to the main branch
+    paths:
+      - '.github/workflows/docker_test_run.yml'
+      - 'asc606-pdf-parser-app/**'
   pull_request:
     branches: 
       - main 
