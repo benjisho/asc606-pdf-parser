@@ -37,12 +37,7 @@ jobs:
       run: wget -q -O dummy.pdf https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
 
     - name: Start ClamAV Container
-      run: |
-        pwd
-        ls -la
-        ls -la virus-protection
-        ls -la virus-protection/clamav
-        docker compose -f virus-protection/clamav/docker-compose.clamav.yml up -d clamav
+      run: docker compose -f docker-compose.clamav.yml up -d clamav
 
     - name: Wait for ClamAV to Initialize
       run: |
