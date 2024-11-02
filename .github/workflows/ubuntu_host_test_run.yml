@@ -14,6 +14,9 @@ on:
       - '.github/workflows/*'  # Changes to workflows should not trigger a build
       - 'pdf_files_to_parse/**'  # Input files are dynamic and shouldn't trigger image rebuilds
       - 'output_files/**'  # Output files shouldn't trigger image rebuilds
+
+      - '!.github/workflows/ubuntu_host_test_run.yml'  # Exclude this specific workflow
+
 jobs:
   host_interaction_test:
     runs-on: ubuntu-24.04
