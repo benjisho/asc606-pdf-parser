@@ -55,7 +55,7 @@
   <body class="dark">
 
     <div class="bg-background text-primary-foreground min-h-screen flex flex-col items-center justify-center p-6">
-      <h1 class="text-5xl font-extrabold mb-8 text-center text-accent">Upload and Parse ASC606 PDF to Text</h1>
+      <h1 class="text-5xl font-extrabold mb-8 text-center text-accent">PDF2Text for Accountants (P2TA)</h1>
 
       <!-- Form Section -->
       <form
@@ -65,7 +65,7 @@
         enctype="multipart/form-data"
         class="flex flex-col items-center space-y-6 bg-card rounded-lg shadow-xl p-8 transition-transform transform hover:scale-105 duration-300"
       >
-        <label for="file" class="text-primary text-lg font-semibold">Upload your ASC606 PDF:</label>
+        <label for="file" class="text-primary text-lg font-semibold">Select PDF Type and Upload:</label>
         <input
           type="file"
           name="file"
@@ -97,7 +97,7 @@
         {% if output_file %}
         <p class="text-primary text-lg">Your PDF has been parsed! <a href="/download/{{ output_file }}" class="underline text-accent hover:text-accent/80">Click to download your text file here.</a></p>
         {% endif %}
-    </div>
+      </div>
     </div>
 
   </body>

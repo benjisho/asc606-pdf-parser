@@ -6,13 +6,13 @@ on:
       - main  # Trigger workflow on pushes to the main branch
     paths:
       - '.github/workflows/docker-publish.yml'
-      - 'asc606-pdf-parser-app/**'
+      - 'p2ta-pdf-parser-app/**'
   pull_request:
     branches: 
       - main 
     paths:
       - '.github/workflows/docker-publish.yml'
-      - 'asc606-pdf-parser-app/**'
+      - 'p2ta-pdf-parser-app/**'
 
 jobs:
   host_interaction_test:
@@ -24,15 +24,15 @@ jobs:
 
     # - name: Ensure Logs Directory Writable
     #   run: |
-    #     mkdir -p asc606-pdf-parser-app/logs
-    #     chmod -R 777 asc606-pdf-parser-app/logs  # Confirm writable permissions
+    #     mkdir -p p2ta-pdf-parser-app/logs
+    #     chmod -R 777 p2ta-pdf-parser-app/logs  # Confirm writable permissions
         
     - name: Install Dependencies
       run: |
         sudo apt-get update && sudo apt-get install -y wget python3 python3-pip
 
     - name: Install Python Requirements
-      run: sudo rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r asc606-pdf-parser-app/requirements.txt
+      run: sudo rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r p2ta-pdf-parser-app/requirements.txt
       
     - name: Download Sample PDF
       run: |
@@ -44,7 +44,7 @@ jobs:
     - name: Run PDF Parser
       id: run-parser
       run: |
-        python3 asc606-pdf-parser-app/asc606-pdf-parser.py || {
+        python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py || {
           echo "Error: Parsing script failed";
           exit 1;
         }

@@ -7,8 +7,8 @@ on:
       - main  # Trigger workflow on pushes to the main branch
     paths:
       - '.github/workflows/docker-publish.yml'
-      - 'asc606-pdf-parser-app/**'
-      - 'asc606-pdf-parser-website/**'
+      - 'p2ta-pdf-parser-app/**'
+      - 'p2ta-pdf-parser-website/**'
 
 # Define environment variables used throughout the workflow
 env:
@@ -43,13 +43,13 @@ jobs:
       - name: Build and push Docker image (Parser)
         uses: docker/build-push-action@v4
         with:
-          context: ./asc606-pdf-parser-app  # Directory for the parser app
-          file: ./asc606-pdf-parser-app/Dockerfile.pdf-parser
+          context: ./p2ta-pdf-parser-app  # Directory for the parser app
+          file: ./p2ta-pdf-parser-app/Dockerfile.pdf-parser
           push: true
           tags: |
-            benjisho/asc606-pdf-parser:latest
-            benjisho/asc606-pdf-parser:${{ github.ref_name }}
-            benjisho/asc606-pdf-parser:${{ env.RELEASE_TAG }}
+            benjisho/p2ta-pdf-parser:latest
+            benjisho/p2ta-pdf-parser:${{ github.ref_name }}
+            benjisho/p2ta-pdf-parser:${{ env.RELEASE_TAG }}
 
       # Step 5: Log out from Docker Hub
       - name: Log out from Docker Hub
@@ -79,13 +79,13 @@ jobs:
       - name: Build and push Docker image (Website)
         uses: docker/build-push-action@v4
         with:
-          context: ./asc606-pdf-parser-website  # Directory for the website
-          file: ./asc606-pdf-parser-website/Dockerfile.website
+          context: ./p2ta-pdf-parser-website  # Directory for the website
+          file: ./p2ta-pdf-parser-website/Dockerfile.website
           push: true
           tags: |
-            benjisho/asc606-pdf-parser-website:latest
-            benjisho/asc606-pdf-parser-website:${{ github.ref_name }}
-            benjisho/asc606-pdf-parser-website:${{ env.RELEASE_TAG }}
+            benjisho/p2ta-pdf-parser-website:latest
+            benjisho/p2ta-pdf-parser-website:${{ github.ref_name }}
+            benjisho/p2ta-pdf-parser-website:${{ env.RELEASE_TAG }}
 
       # Step 5: Log out from Docker Hub
       - name: Log out from Docker Hub

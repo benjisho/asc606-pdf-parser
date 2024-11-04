@@ -21,7 +21,7 @@ def is_clamav_container_present():
     """Check if the ClamAV container is running by pinging."""
     try:
         result = subprocess.run(
-            ["ping", "-c", "1", "asc606-pdf-parser-clamav-1"],
+            ["ping", "-c", "1", "p2ta-pdf-parser-clamav-1"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=False
@@ -45,7 +45,7 @@ def connect_to_clamav():
     # Endless retry loop until ClamAV is available
     while True:
         try:
-            cd = clamd.ClamdNetworkSocket(host='asc606-pdf-parser-clamav-1', port=3310)
+            cd = clamd.ClamdNetworkSocket(host='p2ta-pdf-parser-clamav-1', port=3310)
             cd.ping()  # Ping to ensure ClamAV is reachable
             logging.info("Connected to ClamAV")
             return cd
@@ -123,7 +123,7 @@ def upload_file():
             return render_template('index.html', error_message="Invalid or corrupted PDF file")
 
         # Step 4: Parse the PDF
-        subprocess.run(['python3', '/app/asc606-pdf-parser-app/asc606-pdf-parser.py'], check=True)
+        subprocess.run(['python3', '/app/p2ta-pdf-parser-app/p2ta-pdf-parser.py'], check=True)
 
         # Step 5: Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"

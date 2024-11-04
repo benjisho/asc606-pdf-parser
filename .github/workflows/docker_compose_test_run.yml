@@ -6,14 +6,14 @@ on:
       - main  # Trigger workflow on pushes to the main branch
     paths:
       - '.github/workflows/docker_compose_test_run.yml'
-      - 'asc606-pdf-parser-app/**'
+      - 'p2ta-pdf-parser-app/**'
       - 'docker-compose.yml'
   pull_request:
     branches: 
       - main 
     paths:
       - '.github/workflows/docker_compose_test_run.yml'
-      - 'asc606-pdf-parser-app/**'
+      - 'p2ta-pdf-parser-app/**'
       - 'docker-compose.yml'
 
 jobs:
@@ -26,8 +26,8 @@ jobs:
 
     # - name: Ensure Logs Directory Writable
     #   run: |
-    #     mkdir -p asc606-pdf-parser-app/logs
-    #     chmod -R 777 asc606-pdf-parser-app/logs  # Confirm writable permissions
+    #     mkdir -p p2ta-pdf-parser-app/logs
+    #     chmod -R 777 p2ta-pdf-parser-app/logs  # Confirm writable permissions
         
     - name: Install Expect
       run: sudo apt-get update && sudo apt-get install -y expect
@@ -40,14 +40,14 @@ jobs:
         }
 
     - name: Pull Docker Image
-      run: docker pull benjisho/asc606-pdf-parser
+      run: docker pull benjisho/p2ta-pdf-parser
 
     - name: Run Docker Compose with Expect
       id: run-parser
       run: |
         expect -c "
           set timeout 600
-          spawn docker compose run --rm asc606-pdf-parser
+          spawn docker compose run --rm p2ta-pdf-parser
           expect {
             \"No PDF files found in directory: pdf_files_to_parse\" {
               puts \"Error: No PDF files found\"
@@ -71,6 +71,6 @@ jobs:
       run: docker compose down -v --remove-orphans
 
     - name: Remove Docker Image
-      run: docker rmi benjisho/asc606-pdf-parser
+      run: docker rmi benjisho/p2ta-pdf-parser
 
     timeout-minutes: 10
