@@ -1,4 +1,4 @@
-# PDF2Text for Accountants (P2TA)
+# PDF-2-Text for Accountants (P2TA)
 
 This project is a Python-based solution designed to parse PDF documents related to various accounting standards, extract relevant information, and save the output as structured text files. The project includes a web-based interface and optional ClamAV antivirus scanning to ensure safe file handling for uploaded PDF files.
 
