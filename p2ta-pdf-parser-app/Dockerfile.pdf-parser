@@ -13,7 +13,7 @@ COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the main Python script after installing dependencies to reduce rebuild time when code changes
-COPY ./p2ta-pdf-parser.py ./
+COPY ./p2ta-pdf-parser-app/*.py /app/
 
 # Command to run the script
 ENTRYPOINT ["python3", "p2ta-pdf-parser.py"]
