@@ -90,6 +90,22 @@ def scan_with_clamav(file_path):
         logging.info("ClamAV is not available, skipping virus scan.")
         return True  # Assume clean if ClamAV is unavailable
 
+# New function to get parser script based on selected form type
+def get_parser_script(form_type):
+    parsers = {
+        "asc606": "asc606-pdf-parser.py",
+        "asc842": "asc842-pdf-parser.py",
+        "asc805": "asc805-pdf-parser.py",
+        "asc718": "asc718-pdf-parser.py",
+        "asc815": "asc815-pdf-parser.py",
+        "ifrs15": "ifrs15-pdf-parser.py",
+        "asc450": "asc450-pdf-parser.py",
+        "asc320": "asc320-pdf-parser.py",
+        "asc330": "asc330-pdf-parser.py",
+        "asc250": "asc250-pdf-parser.py",
+    }
+    return parsers.get(form_type)
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -100,6 +116,7 @@ def upload_file():
         return render_template('index.html', error_message="No file part in the request")
 
     file = request.files['file']
+    form_type = request.form['form_type']  # Get the selected form type
 
     if file.filename == '':
         return render_template('index.html', error_message="No selected file")
@@ -122,8 +139,12 @@ def upload_file():
             os.remove(file_path)  # Remove invalid file
             return render_template('index.html', error_message="Invalid or corrupted PDF file")
 
-        # Step 4: Parse the PDF
-        subprocess.run(['python3', '/app/p2ta-pdf-parser-app/p2ta-pdf-parser.py'], check=True)
+        # Step 4: Route to the appropriate parser script
+        parser_script = get_parser_script(form_type)
+        if parser_script:
+            subprocess.run(['python3', f'/app/p2ta-pdf-parser-app/{parser_script}'], check=True)
+        else:
+            return render_template('index.html', error_message="Invalid form type selected.")
 
         # Step 5: Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
