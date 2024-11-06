@@ -95,7 +95,7 @@ docker compose up -d --build website
 docker compose run --rm --build website
 
 # Run p2ta-pdf-parser directly (quickest for command-line parsing)
-docker compose run --rm --build p2ta-pdf-parser
+docker compose run --rm --build p2ta-pdf-parser --form_type asc606 --debug
 ```
 
 #### OPTIONAL: Enabling Antivirus Scanning in Docker Compose
