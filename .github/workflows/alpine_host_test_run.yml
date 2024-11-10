@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - '.github/workflows/alpine_host_test_run.yml'
-      - 'asc606-pdf-parser-app/**'
+      - 'p2ta-pdf-parser-app/**'
   pull_request:
     branches:
       - main
     paths:
       - '.github/workflows/alpine_host_test_run.yml'
-      - 'asc606-pdf-parser-app/**'
+      - 'p2ta-pdf-parser-app/**'
 
 jobs:
   alpine_host_test:
@@ -30,7 +30,7 @@ jobs:
         apk add --no-cache python3 py3-pip wget expect
 
     - name: Install Python Requirements
-      run: rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r asc606-pdf-parser-app/requirements.txt
+      run: rm /usr/lib/python*/EXTERNALLY-MANAGED && pip3 install -r p2ta-pdf-parser-app/requirements.txt
           
     - name: Download Sample PDF
       run: |
@@ -45,7 +45,7 @@ jobs:
       run: |
         expect -c "
           set timeout 600
-          spawn python3 asc606-pdf-parser-app/asc606-pdf-parser.py
+          spawn python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py --form_type asc606 --debug
           expect {
             \"No PDF files found in directory: pdf_files_to_parse\" {
               puts \"Error: No PDF files found\"

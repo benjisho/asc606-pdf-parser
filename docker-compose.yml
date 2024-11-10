@@ -1,14 +1,14 @@
 version: '3'
 services:
-  asc606-pdf-parser:
-    image: benjisho/asc606-pdf-parser:v1.0.1
+  p2ta-pdf-parser:
+    image: benjisho/p2ta-pdf-parser:v1.0.1
     build:
-      context: ./asc606-pdf-parser-app
+      context: ./p2ta-pdf-parser-app
       dockerfile: Dockerfile.pdf-parser
     volumes:
       - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
-      - ./asc606-pdf-parser-app/logs:/app/logs # Ensure this directory is writable on the host machine
+      - ./p2ta-pdf-parser-app/logs:/app/logs # Ensure this directory is writable on the host machine
     environment:
       - PYTHONUNBUFFERED=1
     security_opt:
@@ -16,13 +16,13 @@ services:
     restart: unless-stopped
 
   website:
-    image: benjisho/asc606-pdf-parser-website:v1.0.1
+    image: benjisho/p2ta-pdf-parser-website:v1.0.1
     build:
-      context: ./asc606-pdf-parser-website
+      context: ./p2ta-pdf-parser-website
       dockerfile: Dockerfile.website
     volumes:
-      - ./asc606-pdf-parser-website:/app/asc606-pdf-parser-website
-      - ./asc606-pdf-parser-app:/app/asc606-pdf-parser-app
+      - ./p2ta-pdf-parser-website:/app/p2ta-pdf-parser-website
+      - ./p2ta-pdf-parser-app:/app/p2ta-pdf-parser-app
       - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
     ports:

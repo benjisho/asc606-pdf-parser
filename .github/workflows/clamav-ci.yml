@@ -7,14 +7,14 @@ on:
     paths:
       - '.github/workflows/clamav-ci.yml'
       - 'virus-protection/clamav/**'
-      - 'asc606-pdf-parser-website/**'
+      - 'p2ta-pdf-parser-website/**'
   pull_request:
     branches:
       - main
     paths:
       - '.github/workflows/clamav-ci.yml'
       - 'virus-protection/clamav/**'
-      - 'asc606-pdf-parser-website/**'
+      - 'p2ta-pdf-parser-website/**'
 
 jobs:
   clamav-check:

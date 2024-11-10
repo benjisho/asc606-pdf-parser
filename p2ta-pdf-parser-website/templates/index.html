@@ -53,10 +53,9 @@
     <script defer src="/static/js/animation-for-working.js"></script>
   </head>
   <body class="dark">
-
     <div class="bg-background text-primary-foreground min-h-screen flex flex-col items-center justify-center p-6">
-      <h1 class="text-5xl font-extrabold mb-8 text-center text-accent">Upload and Parse ASC606 PDF to Text</h1>
-
+      <h1 class="text-5xl font-extrabold mb-8 text-center text-accent">PDF-2-Text for Accountants (P2TA)</h1>
+      
       <!-- Form Section -->
       <form
         id="upload-form"
@@ -65,7 +64,20 @@
         enctype="multipart/form-data"
         class="flex flex-col items-center space-y-6 bg-card rounded-lg shadow-xl p-8 transition-transform transform hover:scale-105 duration-300"
       >
-        <label for="file" class="text-primary text-lg font-semibold">Upload your ASC606 PDF:</label>
+        <label for="form_type" class="text-primary text-lg font-semibold">Select PDF Type you are about to Upload:</label>
+        <select name="form_type" id="form_type" required class="bg-input text-primary rounded-lg px-4 py-2 border border-border">
+          <option value="asc606">ASC 606 (Revenue)</option>
+          <option value="asc842">ASC 842 (Leases)</option>
+          <option value="asc805">ASC 805 (Business Combinations)</option>
+          <option value="asc718">ASC 718 (Stock Compensation)</option>
+          <option value="asc815">ASC 815 (Derivatives and Hedging)</option>
+          <option value="ifrs15">IFRS 15 (International Revenue)</option>
+          <option value="asc450">ASC 450 (Contingencies)</option>
+          <option value="asc320">ASC 320 (Investments)</option>
+          <option value="asc330">ASC 330 (Inventory)</option>
+          <option value="asc250">ASC 250 (Accounting Changes)</option>
+        </select>
+        <label for="file" class="text-primary text-lg font-semibold">Upload your PDF:</label>
         <input
           type="file"
           name="file"
@@ -74,20 +86,20 @@
           required
           class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-ring transition duration-200 hover:border-accent"
         />
-
+    
         <!-- Show error message if exists -->
         {% if error_message %}
         <p class="text-red-500 mt-2">{{ error_message }}</p>
         {% endif %}
-
+    
         <button type="submit" class="bg-primary text-primary-foreground rounded-lg px-8 py-3 hover:bg-primary/80 transition-colors duration-300 shadow-lg transform hover:translate-y-1">Upload</button>
       </form>
-
+    
       <!-- Loading Message -->
       <div id="loading-message" class="hidden text-primary text-lg mt-8">
         Working<span id="dot-animation">...</span>
       </div>
-
+    
       <!-- Output Section -->
       <div id="output" class="mt-8 text-center">
         {% if success_message %}
@@ -97,7 +109,7 @@
         {% if output_file %}
         <p class="text-primary text-lg">Your PDF has been parsed! <a href="/download/{{ output_file }}" class="underline text-accent hover:text-accent/80">Click to download your text file here.</a></p>
         {% endif %}
-    </div>
+      </div>
     </div>
 
   </body>

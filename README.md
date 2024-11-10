@@ -1,6 +1,6 @@
-# ASC 606 PDF Parser
+# PDF-2-Text for Accountants (P2TA)
 
-This project provides a Python script and web-based service to parse PDF files, extract relevant information, and save the results to text files. It also includes optional ClamAV antivirus scanning for uploaded PDF files.
+This project is a Python-based solution designed to parse PDF documents related to various accounting standards, extract relevant information, and save the output as structured text files. The project includes a web-based interface and optional ClamAV antivirus scanning to ensure safe file handling for uploaded PDF files.
 
 ## Table of Contents
 - [Features](#features)
@@ -58,13 +58,13 @@ pip install -r requirements.txt
 To run the script directly:
 
 ```bash
-python ./asc606-pdf-parser-app/asc606-pdf-parser.py
+python ./p2ta-pdf-parser-app/p2ta-pdf-parser.py
 ```
 
 With debug logging:
 
 ```bash
-python ./asc606-pdf-parser-app/asc606-pdf-parser.py --debug
+python ./p2ta-pdf-parser-app/p2ta-pdf-parser.py --debug
 ```
 
 The script will process PDFs in `pdf_files_to_parse` and output summaries to `output_files`.
@@ -78,7 +78,7 @@ docker run --rm \
   -v "$(pwd)/pdf_files_to_parse:/app/pdf_files_to_parse" \
   -v "$(pwd)/output_files:/app/output_files" \
   -e PYTHONUNBUFFERED=1 \
-  benjisho/asc606-pdf-parser:latest
+  benjisho/p2ta-pdf-parser:latest
 ```
 
 ### Option 3: Preferred Running with Docker Compose
@@ -87,15 +87,15 @@ For ease of use, Docker Compose can build and manage the containerized applicati
 
 ```bash
 # Build both website and parser containers
-docker compose build website asc606-pdf-parser
+docker compose build website p2ta-pdf-parser
 
 # Run the website service in detached mode (unsafe for production)
 docker compose up -d --build website
 # Or test website with
 docker compose run --rm --build website
 
-# Run asc606-pdf-parser directly (quickest for command-line parsing)
-docker compose run --rm --build asc606-pdf-parser
+# Run p2ta-pdf-parser directly (quickest for command-line parsing)
+docker compose run --rm --build p2ta-pdf-parser --form_type asc606 --debug
 ```
 
 #### OPTIONAL: Enabling Antivirus Scanning in Docker Compose

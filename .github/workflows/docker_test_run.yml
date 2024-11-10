@@ -6,13 +6,13 @@ on:
       - main  # Trigger workflow on pushes to the main branch
     paths:
       - '.github/workflows/docker_test_run.yml'
-      - 'asc606-pdf-parser-app/**'
+      - 'p2ta-pdf-parser-app/**'
   pull_request:
     branches: 
       - main 
     paths:
       - '.github/workflows/docker_test_run.yml'
-      - 'asc606-pdf-parser-app/**'
+      - 'p2ta-pdf-parser-app/**'
       
 jobs:
   docker_run_interaction_test:
@@ -33,7 +33,7 @@ jobs:
         }
 
     - name: Pull Docker Image
-      run: docker pull benjisho/asc606-pdf-parser
+      run: docker pull benjisho/p2ta-pdf-parser
 
     - name: Run Docker with Expect
       id: run-parser
@@ -43,7 +43,7 @@ jobs:
           spawn docker run --rm \
             -v $(pwd)/pdf_files_to_parse:/app/pdf_files_to_parse:rw \
             -v $(pwd)/output_files:/app/output_files:rw \
-            benjisho/asc606-pdf-parser
+            benjisho/p2ta-pdf-parser --form_type asc606 --debug
 
           expect {
             \"No PDF files found in directory: pdf_files_to_parse\" {
@@ -68,6 +68,6 @@ jobs:
       run: docker system prune -f
 
     - name: Remove Docker Image
-      run: docker rmi benjisho/asc606-pdf-parser
+      run: docker rmi benjisho/p2ta-pdf-parser
 
     timeout-minutes: 10

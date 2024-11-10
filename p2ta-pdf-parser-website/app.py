@@ -21,7 +21,7 @@ def is_clamav_container_present():
     """Check if the ClamAV container is running by pinging."""
     try:
         result = subprocess.run(
-            ["ping", "-c", "1", "asc606-pdf-parser-clamav-1"],
+            ["ping", "-c", "1", "p2ta-pdf-parser-clamav-1"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=False
@@ -45,7 +45,7 @@ def connect_to_clamav():
     # Endless retry loop until ClamAV is available
     while True:
         try:
-            cd = clamd.ClamdNetworkSocket(host='asc606-pdf-parser-clamav-1', port=3310)
+            cd = clamd.ClamdNetworkSocket(host='p2ta-pdf-parser-clamav-1', port=3310)
             cd.ping()  # Ping to ensure ClamAV is reachable
             logging.info("Connected to ClamAV")
             return cd
@@ -54,6 +54,22 @@ def connect_to_clamav():
             time.sleep(10)
 
 clamav_client = connect_to_clamav()  # Try to establish connection at app startup
+
+# New function to get parser script based on selected form type
+def get_parser_script(form_type):
+    parsers = {
+        "asc606": "asc606-pdf-parser.py",
+        "asc842": "asc842-pdf-parser.py",
+        "asc805": "asc805-pdf-parser.py",
+        "asc718": "asc718-pdf-parser.py",
+        "asc815": "asc815-pdf-parser.py",
+        "ifrs15": "ifrs15-pdf-parser.py",
+        "asc450": "asc450-pdf-parser.py",
+        "asc320": "asc320-pdf-parser.py",
+        "asc330": "asc330-pdf-parser.py",
+        "asc250": "asc250-pdf-parser.py",
+    }
+    return parsers.get(form_type)
 
 # Function to check if file extension is allowed
 def allowed_file(filename):
@@ -100,32 +116,37 @@ def upload_file():
         return render_template('index.html', error_message="No file part in the request")
 
     file = request.files['file']
+    form_type = request.form['form_type']  # Get the selected form type
 
     if file.filename == '':
         return render_template('index.html', error_message="No selected file")
 
     if file and allowed_file(file.filename):
-        # Step 1: Save the uploaded file directly to `pdf_files_to_parse`
+        # Save the uploaded file directly to `pdf_files_to_parse`
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(file_path)
 
         # Set file permissions
         os.chmod(file_path, 0o644)
 
-        # Step 2: Scan the uploaded file with ClamAV daemon for viruses, if available
+        # Scan the uploaded file with ClamAV daemon for viruses, if available
         if not scan_with_clamav(file_path):
             os.remove(file_path)  # Remove file if it's infected
             return render_template('index.html', error_message="File contains a virus or could not be scanned!")
 
-        # Step 3: Check if the file is a valid PDF
+        # Check if the file is a valid PDF
         if not is_valid_pdf(file_path):
             os.remove(file_path)  # Remove invalid file
             return render_template('index.html', error_message="Invalid or corrupted PDF file")
 
-        # Step 4: Parse the PDF
-        subprocess.run(['python3', '/app/asc606-pdf-parser-app/asc606-pdf-parser.py'], check=True)
+        # Route to the appropriate parser script
+        parser_script = get_parser_script(form_type)
+        if parser_script:
+            subprocess.run(['python3', f'/app/p2ta-pdf-parser-app/{parser_script}'], check=True)
+        else:
+            return render_template('index.html', error_message="Invalid form type selected.")
 
-        # Step 5: Output the result file and display success message
+         # Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
         success_message = "No viruses found. Parsing PDF..."
         return render_template('index.html', output_file=output_file, success_message=success_message)
@@ -135,7 +156,7 @@ def upload_file():
 
 @app.route('/download/<filename>')
 def download_file(filename):
-    return send_from_directory(OUTPUT_FOLDER, filename)
+    return send_from_directory(OUTPUT_FOLDER, filename, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
