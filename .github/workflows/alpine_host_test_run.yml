@@ -3,13 +3,13 @@ name: Alpine Host Test Run
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - '.github/workflows/alpine_host_test_run.yml'
       - 'p2ta-pdf-parser-app/**'
   pull_request:
     branches:
-      - main
+      - master
     paths:
       - '.github/workflows/alpine_host_test_run.yml'
       - 'p2ta-pdf-parser-app/**'
@@ -39,13 +39,11 @@ jobs:
           exit 1;
         }
 
-
-
     - name: Run Python Script with Expect
       run: |
         expect -c "
           set timeout 600
-          spawn python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py --form_type asc606 --debug
+            spawn python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py --form_type asc606 --debug 
           expect {
             \"No PDF files found in directory: pdf_files_to_parse\" {
               puts \"Error: No PDF files found\"
@@ -68,7 +66,7 @@ jobs:
     - name: Verify Output File
       run: |
         if [ ! -f output_files/sample.txt ]; then
-          echo "Error: Output file not found"
+          echo "Error: Parsed output file not found"
           exit 1
         fi
 

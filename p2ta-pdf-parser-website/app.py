@@ -58,18 +58,18 @@ clamav_client = connect_to_clamav()  # Try to establish connection at app startu
 # New function to get parser script based on selected form type
 def get_parser_script(form_type):
     parsers = {
-        "asc606": "asc606-pdf-parser.py",
-        "asc842": "asc842-pdf-parser.py",
-        "asc805": "asc805-pdf-parser.py",
-        "asc718": "asc718-pdf-parser.py",
-        "asc815": "asc815-pdf-parser.py",
-        "ifrs15": "ifrs15-pdf-parser.py",
-        "asc450": "asc450-pdf-parser.py",
-        "asc320": "asc320-pdf-parser.py",
-        "asc330": "asc330-pdf-parser.py",
-        "asc250": "asc250-pdf-parser.py",
+        "asc606": "p2ta-pdf-parser-app/asc606-pdf-parser.py",
+        "asc842": "p2ta-pdf-parser-app/asc842-pdf-parser.py",
+        "asc805": "p2ta-pdf-parser-app/asc805-pdf-parser.py",
+        "asc718": "p2ta-pdf-parser-app/asc718-pdf-parser.py",
+        "asc815": "p2ta-pdf-parser-app/asc815-pdf-parser.py",
+        "ifrs15": "p2ta-pdf-parser-app/ifrs15-pdf-parser.py",
+        "asc450": "p2ta-pdf-parser-app/asc450-pdf-parser.py",
+        "asc320": "p2ta-pdf-parser-app/asc320-pdf-parser.py",
+        "asc330": "p2ta-pdf-parser-app/asc330-pdf-parser.py",
+        "asc250": "p2ta-pdf-parser-app/asc250-pdf-parser.py",
     }
-    return parsers.get(form_type)
+    return parsers.get(form_type)  # Return just the relative path to each parser
 
 # Function to check if file extension is allowed
 def allowed_file(filename):
@@ -142,7 +142,7 @@ def upload_file():
         # Route to the appropriate parser script
         parser_script = get_parser_script(form_type)
         if parser_script:
-            subprocess.run(['python3', f'/app/p2ta-pdf-parser-app/{parser_script}'], check=True)
+            subprocess.run(['python3', parser_script], check=True)
         else:
             return render_template('index.html', error_message="Invalid form type selected.")
 

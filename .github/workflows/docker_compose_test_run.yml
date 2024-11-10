@@ -3,14 +3,14 @@ name: Docker Compose Test Run
 on:
   push:
     branches:
-      - main  # Trigger workflow on pushes to the main branch
+      - master  # Trigger workflow on pushes to the master branch
     paths:
       - '.github/workflows/docker_compose_test_run.yml'
       - 'p2ta-pdf-parser-app/**'
       - 'docker-compose.yml'
   pull_request:
     branches: 
-      - main 
+      - master 
     paths:
       - '.github/workflows/docker_compose_test_run.yml'
       - 'p2ta-pdf-parser-app/**'

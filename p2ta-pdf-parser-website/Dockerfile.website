@@ -4,7 +4,8 @@ FROM python:3.12.7-slim-bookworm
 # Set working directory
 WORKDIR /app
 
-RUN  apt-get update -y && apt install net-tools iputils-ping mtr -y
+# Install network utilities and dependencies
+RUN apt-get update -y && apt install -y net-tools iputils-ping mtr
 
 # Copy the requirements file for Flask
 COPY ./requirements.txt ./
