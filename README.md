@@ -40,6 +40,9 @@ pip install -r requirements.txt
 
 - `pdf_files_to_parse/`: Directory containing PDF files to process.
 - `output_files/`: Directory where extracted summaries are saved.
+- `p2ta-pdf-parser-app/`: Core parser application, including individual parsers for accounting standards and the main parser script.
+- `p2ta-pdf-parser-website/`: Flask-based web application providing a user interface.
+- `virus-protection/clamav/`: Configuration files for ClamAV antivirus scanning.
 
 ## Usage
 
@@ -51,6 +54,7 @@ pip install -r requirements.txt
 
 ### Command Line Arguments
 
+- `--form_type <type>`: Specify the accounting standard type (e.g., `asc606`, `asc718`).
 - `--debug`: Enable detailed debug logging.
 
 ### Option 1: Running the Script Locally
@@ -58,13 +62,13 @@ pip install -r requirements.txt
 To run the script directly:
 
 ```bash
-python ./p2ta-pdf-parser-app/p2ta-pdf-parser.py
+python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py --form_type asc606
 ```
 
 With debug logging:
 
 ```bash
-python ./p2ta-pdf-parser-app/p2ta-pdf-parser.py --debug
+python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py --form_type asc606 --debug
 ```
 
 The script will process PDFs in `pdf_files_to_parse` and output summaries to `output_files`.
@@ -110,12 +114,13 @@ docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose
 
 ## Logging
 
-Logging is set to `INFO` by default, but you can enable `DEBUG` with the `--debug` flag.
+Logging is set to `INFO` by default, but you can enable `DEBUG` with the `--debug` flag for more detailed logging information.
 
 ## Notes
 
 - Ensure `pdf_files_to_parse` directory exists with valid PDF files.
 - Processed PDF summaries are saved to `output_files` with `.txt` extensions.
+- If using ClamAV for scanning, ensure ClamAV is up-to-date to avoid warnings about outdated virus definitions.
 
 ## License
 
