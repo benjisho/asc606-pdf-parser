@@ -43,7 +43,7 @@ jobs:
           spawn docker run --rm \
             -v $(pwd)/pdf_files_to_parse:/app/pdf_files_to_parse:rw \
             -v $(pwd)/output_files:/app/output_files:rw \
-            benjisho/p2ta-pdf-parser
+            benjisho/p2ta-pdf-parser --form_type asc606 --debug
 
           expect {
             \"No PDF files found in directory: pdf_files_to_parse\" {

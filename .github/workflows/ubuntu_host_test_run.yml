@@ -44,7 +44,7 @@ jobs:
     - name: Run PDF Parser
       id: run-parser
       run: |
-        python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py || {
+        python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py --form_type asc606 --debug || {
           echo "Error: Parsing script failed";
           exit 1;
         }

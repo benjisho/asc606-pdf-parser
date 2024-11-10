@@ -47,7 +47,7 @@ jobs:
       run: |
         expect -c "
           set timeout 600
-          spawn docker compose run --rm p2ta-pdf-parser
+          spawn docker compose run --rm p2ta-pdf-parser --form_type asc606 --debug
           expect {
             \"No PDF files found in directory: pdf_files_to_parse\" {
               puts \"Error: No PDF files found\"
