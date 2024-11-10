@@ -4,7 +4,7 @@ name: Docker Image CI/CD
 on:
   push:
     branches:
-      - main  # Trigger workflow on pushes to the main branch
+      - master  # Trigger workflow on pushes to the master branch
     paths:
       - '.github/workflows/docker-publish.yml'
       - 'p2ta-pdf-parser-app/**'

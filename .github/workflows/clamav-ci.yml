@@ -3,14 +3,14 @@ name: ClamAV Service Test
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - '.github/workflows/clamav-ci.yml'
       - 'virus-protection/clamav/**'
       - 'p2ta-pdf-parser-website/**'
   pull_request:
     branches:
-      - main
+      - master
     paths:
       - '.github/workflows/clamav-ci.yml'
       - 'virus-protection/clamav/**'

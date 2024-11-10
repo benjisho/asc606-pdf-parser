@@ -3,13 +3,13 @@ name: Alpine Host Test Run
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - '.github/workflows/alpine_host_test_run.yml'
       - 'p2ta-pdf-parser-app/**'
   pull_request:
     branches:
-      - main
+      - master
     paths:
       - '.github/workflows/alpine_host_test_run.yml'
       - 'p2ta-pdf-parser-app/**'
