@@ -17,16 +17,16 @@ logging.getLogger().addHandler(file_handler)
 
 # Map form types to parser scripts
 PARSER_SCRIPTS = {
-    "asc606": "p2ta-pdf-parser-app/asc606-pdf-parser.py",
-    "asc842": "p2ta-pdf-parser-app/asc842-pdf-parser.py",
-    "asc805": "p2ta-pdf-parser-app/asc805-pdf-parser.py",
-    "asc718": "p2ta-pdf-parser-app/asc718-pdf-parser.py",
-    "asc815": "p2ta-pdf-parser-app/asc815-pdf-parser.py",
-    "ifrs15": "p2ta-pdf-parser-app/ifrs15-pdf-parser.py",
-    "asc450": "p2ta-pdf-parser-app/asc450-pdf-parser.py",
-    "asc320": "p2ta-pdf-parser-app/asc320-pdf-parser.py",
-    "asc330": "p2ta-pdf-parser-app/asc330-pdf-parser.py",
-    "asc250": "p2ta-pdf-parser-app/asc250-pdf-parser.py",
+    "asc606": "asc606-pdf-parser.py",
+    "asc842": "asc842-pdf-parser.py",
+    "asc805": "asc805-pdf-parser.py",
+    "asc718": "asc718-pdf-parser.py",
+    "asc815": "asc815-pdf-parser.py",
+    "ifrs15": "ifrs15-pdf-parser.py",
+    "asc450": "asc450-pdf-parser.py",
+    "asc320": "asc320-pdf-parser.py",
+    "asc330": "asc330-pdf-parser.py",
+    "asc250": "asc250-pdf-parser.py",
 }
 
 def get_parser_script(form_type):

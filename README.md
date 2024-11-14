@@ -82,7 +82,7 @@ docker run --rm \
   -v "$(pwd)/pdf_files_to_parse:/app/pdf_files_to_parse" \
   -v "$(pwd)/output_files:/app/output_files" \
   -e PYTHONUNBUFFERED=1 \
-  benjisho/p2ta-pdf-parser:latest
+  benjisho/p2ta-pdf-parser:v2.0.0 --form_type asc606 --debug
 ```
 
 ### Option 3: Preferred Running with Docker Compose
@@ -95,6 +95,7 @@ docker compose build website p2ta-pdf-parser
 
 # Run the website service in detached mode (unsafe for production)
 docker compose up -d --build website
+
 # Or test website with
 docker compose run --rm --build website
 
