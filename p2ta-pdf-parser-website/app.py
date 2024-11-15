@@ -21,7 +21,7 @@ def is_clamav_container_present():
     """Check if the ClamAV container is running by pinging."""
     try:
         result = subprocess.run(
-            ["ping", "-c", "1", "p2ta-pdf-parser-clamav-1"],
+            ["ping", "-c", "1", "clamav-container"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=False
@@ -45,7 +45,7 @@ def connect_to_clamav():
     # Endless retry loop until ClamAV is available
     while True:
         try:
-            cd = clamd.ClamdNetworkSocket(host='p2ta-pdf-parser-clamav-1', port=3310)
+            cd = clamd.ClamdNetworkSocket(host='clamav-container', port=3310)
             cd.ping()  # Ping to ensure ClamAV is reachable
             logging.info("Connected to ClamAV")
             return cd

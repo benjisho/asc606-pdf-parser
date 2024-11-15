@@ -109,6 +109,9 @@ For enhanced security, you can enable ClamAV to scan uploaded files in the `webs
 
 ```bash
 docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml up --build website clamav -d
+
+#### Wait until clamav fully started using the logs command!
+docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose.clamav.yml logs -f
 ```
 
 > **Note:** ClamAV takes a few moments to initialize. The web application will automatically attempt to connect to ClamAV, retrying until ClamAV is available for scans.
