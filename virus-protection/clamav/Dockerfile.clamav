@@ -13,8 +13,8 @@ RUN echo "ConcurrentDatabaseReload no" >> /etc/clamav/clamd.conf
 # Disable Freshclam testing to minimize RAM usage
 RUN echo "TestDatabases no" >> /etc/clamav/freshclam.conf
 
-# Update the virus database
-RUN freshclam
+# Update the virus database automatically with a cron job
+RUN echo "0 */4 * * * /usr/bin/freshclam" | crontab -
 
 # Expose the ClamAV service port for communication
 EXPOSE 3310
