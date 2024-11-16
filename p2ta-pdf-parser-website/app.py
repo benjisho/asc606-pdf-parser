@@ -42,16 +42,20 @@ def connect_to_clamav():
         logging.info("ClamAV is not running. Starting website without antivirus scanning.")
         return None
 
-    # Endless retry loop until ClamAV is available
-    while True:
+    # Retry loop that gracefully gives up if ClamAV isn't available after a few tries.
+    retry_count = 0
+    max_retries = 20
+    while retry_count < max_retries:
         try:
             cd = clamd.ClamdNetworkSocket(host='clamav-container', port=3310)
-            cd.ping()  # Ping to ensure ClamAV is reachable
+            cd.ping()
             logging.info("Connected to ClamAV")
             return cd
         except Exception as e:
-            logging.warning(f"ClamAV still starting. Waiting... | {e}")
-            time.sleep(10)
+            retry_count += 1
+            logging.warning(f"ClamAV still starting. Retrying ({retry_count}/{max_retries})... | {e}")
+            time.sleep(20)
+
 
 clamav_client = connect_to_clamav()  # Try to establish connection at app startup
 
