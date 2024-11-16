@@ -11,7 +11,7 @@ args = parser.parse_args()
 
 logging_level = logging.DEBUG if args.debug else logging.INFO
 logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
-file_handler = logging.FileHandler('p2ta_pdf_parser.log')
+file_handler = logging.FileHandler('p2ta-pdf-parser-app/logs/p2ta_pdf_parser.log')
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logging.getLogger().addHandler(file_handler)
 
