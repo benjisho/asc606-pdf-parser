@@ -11,7 +11,7 @@ This project is a Python-based solution designed to parse PDF documents related 
   - [Command Line Arguments](#command-line-arguments)
   - [Option 1: Running the Script Locally](#option-1-running-the-script-locally)
   - [Option 2: Running with Docker](#option-2-running-with-docker)
-  - [Option 3: Preferred Running with Docker Compose](#option-3-preferred-running-with-docker-compose)
+  - [Option 3: Preferred - Running with Docker Compose](#option-3-preferred---running-with-docker-compose)
     - [OPTIONAL: Enabling Antivirus Scanning in Docker Compose](#optional-enabling-antivirus-scanning-in-docker-compose)
 - [Logging](#logging)
 - [Notes](#notes)
@@ -61,14 +61,16 @@ pip install -r requirements.txt
 
 To run the script directly:
 
+> use the **p2ta-pdf-parser_without_docker.py** file!
+
 ```bash
-python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py --form_type asc606
+python3 p2ta-pdf-parser-app/p2ta-pdf-parser_without_docker.py --form_type asc606
 ```
 
 With debug logging:
 
 ```bash
-python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py --form_type asc606 --debug
+python3 p2ta-pdf-parser-app/p2ta-pdf-parser_without_docker.py --form_type asc606 --debug
 ```
 
 The script will process PDFs in `pdf_files_to_parse` and output summaries to `output_files`.
@@ -85,7 +87,7 @@ docker run --rm \
   benjisho/p2ta-pdf-parser:v2.0.0 --form_type asc606 --debug
 ```
 
-### Option 3: Preferred Running with Docker Compose
+### Option 3: Preferred - Running with Docker Compose
 
 For ease of use, Docker Compose can build and manage the containerized application:
 

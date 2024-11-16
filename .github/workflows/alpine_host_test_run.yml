@@ -43,7 +43,7 @@ jobs:
       run: |
         expect -c "
           set timeout 600
-            spawn python3 p2ta-pdf-parser-app/p2ta-pdf-parser.py --form_type asc606 --debug 
+            spawn python3 p2ta-pdf-parser-app/p2ta-pdf-parser_without_docker.py --form_type asc606 --debug 
           expect {
             \"No PDF files found in directory: pdf_files_to_parse\" {
               puts \"Error: No PDF files found\"
