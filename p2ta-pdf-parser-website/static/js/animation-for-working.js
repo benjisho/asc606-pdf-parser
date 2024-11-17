@@ -15,27 +15,56 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 500);  // 500ms interval for the dot animation
     });
 });
-  // Example JavaScript to handle form submission and display messages
-  document.getElementById('upload-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    document.getElementById('loading-message').classList.remove('hidden');
-    // Simulate form submission and response
-    setTimeout(() => {
-      document.getElementById('loading-message').classList.add('hidden');
-      document.getElementById('success-message').classList.remove('hidden');
-      document.getElementById('success-message').textContent = 'Upload successful!';
-      document.getElementById('output-file-message').classList.remove('hidden');
-      document.getElementById('download-link').href = '/download/sample.txt';
-    }, 2000);
-  });
-  // Toggle AI Summary Switch
-  const aiSummaryToggle = document.getElementById('ai-summary-toggle');
-  const aiSummaryInput = document.getElementById('ai_summary');
-  aiSummaryToggle.addEventListener('change', () => {
+window.tailwind.config = {
+    darkMode: ['class'],
+    theme: {
+        extend: {
+            colors: {
+                border: 'hsl(var(--border))',
+                input: 'hsl(var(--input))',
+                ring: 'hsl(var(--ring))',
+                background: 'hsl(var(--background))',
+                foreground: 'hsl(var(--foreground))',
+                primary: {
+                    DEFAULT: 'hsl(var(--primary))',
+                    foreground: 'hsl(var(--primary-foreground))'
+                },
+                secondary: {
+                    DEFAULT: 'hsl(var(--secondary))',
+                    foreground: 'hsl(var(--secondary-foreground))'
+                },
+                destructive: {
+                    DEFAULT: 'hsl(var(--destructive))',
+                    foreground: 'hsl(var(--destructive-foreground))'
+                },
+                muted: {
+                    DEFAULT: 'hsl(var(--muted))',
+                    foreground: 'hsl(var(--muted-foreground))'
+                },
+                accent: {
+                    DEFAULT: 'hsl(var(--accent))',
+                    foreground: 'hsl(var(--accent-foreground))'
+                },
+                popover: {
+                    DEFAULT: 'hsl(var(--popover))',
+                    foreground: 'hsl(var(--popover-foreground))'
+                },
+                card: {
+                    DEFAULT: 'hsl(var(--card))',
+                    foreground: 'hsl(var(--card-foreground))'
+                },
+            },
+        }
+    }
+}
+// Toggle AI Summary Switch
+const aiSummaryToggle = document.getElementById('ai-summary-toggle');
+const aiSummaryInput = document.getElementById('ai_summary');
+aiSummaryToggle.addEventListener('change', () => {
     const isEnabled = aiSummaryToggle.checked;
     aiSummaryInput.value = isEnabled ? 'true' : 'false';
     const toggleLabel = aiSummaryToggle.nextElementSibling;
     toggleLabel.firstElementChild.classList.toggle('bg-[#74AA9C]', isEnabled); // Green when enabled
     toggleLabel.firstElementChild.classList.toggle('bg-red-500', !isEnabled); // Red when disabled
     toggleLabel.lastElementChild.classList.toggle('translate-x-6', isEnabled);
-  });
+});

@@ -12,6 +12,15 @@ body {
     box-sizing: border-box;
 }
 
+/* Remove or update this if it's not needed anymore */
+.text-accent {
+    color: #000000;  /* Set to black */
+}
+
+.drop-shadow-md {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);  /* Adds a slight shadow to improve readability */
+}
+
 /* Form container */
 .container {
     background-color: #ffffff;
@@ -40,7 +49,7 @@ body {
 /* Input field styling */
 input[type="file"] {
     background-color: #f7f7f7;
-    color: #34495e;
+    color: #555555;
     border: 2px solid #3498db;
     padding: 12px;
     border-radius: 8px;
@@ -125,48 +134,48 @@ button:hover {
     transform: translateY(-2px);
 }
 
-/* Toggle switch container */
-.relative.inline-block {
-    position: relative;
-    display: inline-block;
-    width: 3rem;
-    height: 1.5rem;
-}
-
-/* Hide checkbox input */
-.relative.inline-block input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-/* Background (on state) */
-.relative.inline-block input[type="checkbox"]:checked + span:first-child {
-    background-color: #74AA9C; /* Green when checked */
-}
-
-/* Background (off state) */
-.relative.inline-block > span:first-child {
-    background-color: rgb(239, 68, 68); /* Default red */
-    border-radius: 9999px;
-    transition: background-color 0.3s ease-in-out;
-}
-
-/* Toggle knob */
-.relative.inline-block > span:last-child {
-    background-color: #ffffff;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: transform 0.3s ease-in-out;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Knob position (on state) */
-.relative.inline-block input[type="checkbox"]:checked + span:first-child + span:last-child {
-    transform: translateX(1.5rem);
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+--foreground: 222.2 84% 4.9%;
+--card: 0 0% 100%;
+--card-foreground: 222.2 84% 4.9%;
+--popover: 0 0% 100%;
+--popover-foreground: 222.2 84% 4.9%;
+--primary: 222.2 47.4% 11.2%;
+--primary-foreground: 210 40% 98%;
+--secondary: 210 40% 96.1%;
+--secondary-foreground: 222.2 47.4% 11.2%;
+--muted: 210 40% 96.1%;
+--muted-foreground: 215.4 16.3% 46.9%;
+--accent: 210 40% 96.1%;
+--accent-foreground: 222.2 47.4% 11.2%;
+--destructive: 0 84.2% 60.2%;
+--destructive-foreground: 210 40% 98%;
+--border: 214.3 31.8% 91.4%;
+--input: 214.3 31.8% 91.4%;
+--ring: 222.2 84% 4.9%;
+--radius: 0.5rem;
+    }
+    .dark {
+        --background: 222.2 84% 4.9%;
+--foreground: 210 40% 98%;
+--card: 222.2 84% 4.9%;
+--card-foreground: 210 40% 98%;
+--popover: 222.2 84% 4.9%;
+--popover-foreground: 210 40% 98%;
+--primary: 210 40% 98%;
+--primary-foreground: 222.2 47.4% 11.2%;
+--secondary: 217.2 32.6% 17.5%;
+--secondary-foreground: 210 40% 98%;
+--muted: 217.2 32.6% 17.5%;
+--muted-foreground: 215 20.2% 65.1%;
+--accent: 217.2 32.6% 17.5%;
+--accent-foreground: 210 40% 98%;
+--destructive: 0 62.8% 30.6%;
+--destructive-foreground: 210 40% 98%;
+--border: 217.2 32.6% 17.5%;
+--input: 217.2 32.6% 17.5%;
+--ring: 212.7 26.8% 83.9;
+    }
 }
