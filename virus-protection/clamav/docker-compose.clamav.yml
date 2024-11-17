@@ -28,3 +28,4 @@ services:
 
 volumes:
   clamav_db:  # Persistent volume for ClamAV database
+      driver: local
