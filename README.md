@@ -78,7 +78,7 @@ The script will process PDFs in `pdf_files_to_parse` and output summaries to `ou
 
 ### Option 2: Running with Docker
 
-To run the `pdf-parser` container alone:
+1. To run the `pdf-parser` container alone:
 
 ```bash
 docker run --rm \
@@ -87,6 +87,8 @@ docker run --rm \
   -e PYTHONUNBUFFERED=1 \
   benjisho/p2ta-pdf-parser:v2.0.1 --form_type asc606 --debug
 ```
+
+2. To run the `website + antivirus` containers - follow the steps in the [official Dockerhub page](https://hub.docker.com/r/benjisho/p2ta-pdf-parser-website)
 
 ### Option 3: Preferred - Running with Docker Compose
 
