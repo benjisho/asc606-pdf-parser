@@ -1,9 +1,45 @@
 # PDF files
 output_files/*.*
 
-# PDF files
-pdf_files_to_parse/*.pdf
-pdf_files_to_parse/*.pdf
+#### PDF files
+*.pdf
+# - Portable Document Format (PDF): The most common and widely used format for electronic documents.
+*.fdf
+# - Forms Data Format: A file format used to define form data for PDF forms.
+*.xfdf
+# - XML Forms Data Format: An XML-based format for representing form data in PDFs.
+*.pdfa
+# - PDF/A: An ISO-standardized version of PDF designed for long-term archiving.
+*.pdfx
+# - PDF/X: A subset of PDF designed for the printing and graphic design industries.
+*.pdfua
+# - PDF/UA: Accessible PDF, compliant with accessibility standards.
+*.ps
+# - PostScript: A precursor to PDF, used for printing and page layout (often converted to PDF).
+*.epdf
+# - Encapsulated PDF: Embedded within another document or format.
+*.xps
+# - XML Paper Specification: Microsoft's alternative to PDF.
+*.oxps
+# - Open XML Paper Specification: An open version of the XPS format.
+*.tiff
+*.tif
+# - Tagged Image File Format: Often used with scanned documents that are later converted to PDF.
+*.djvu
+# - DjVu: An alternative to PDF for scanned documents with a focus on compression.
+*.psd
+# - Photoshop Document: Can be exported to PDF for professional printing.
+*.zpdf
+# - Zipped PDF: A compressed PDF archive.
+*.pfx
+*.p12
+# - PDF Certificate File: Used in digital signing workflows.
+*.ai
+# - Adobe Illustrator File: Can be saved as or converted to a PDF.
+*.eps
+# - Encapsulated PostScript: Similar to PDF but often used in design workflows.
+*.indd
+# - Adobe InDesign Document: Used in publishing and can export to PDF.
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
