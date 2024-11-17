@@ -119,9 +119,10 @@ def summarize_pdf_contents(text):
 
 def main():
     # Main function to start the process of extracting and summarizing information from all PDFs in the directory
-    pdf_directory = "pdf_files_to_parse"
+    pdf_directory = os.path.join("pdf_files_to_parse", "asc815")  # Adjust for specific parser
     output_directory = "output_files"
-    # Check if the directory exists
+
+    # Check for existence
     if not os.path.exists(pdf_directory):
         logging.error(f"Directory not found: {pdf_directory}")
         return
