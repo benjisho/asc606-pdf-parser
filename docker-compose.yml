@@ -1,4 +1,3 @@
-version: '3'
 services:
   p2ta-pdf-parser:
     image: benjisho/p2ta-pdf-parser:v2.0.0
@@ -6,9 +5,11 @@ services:
       context: ./p2ta-pdf-parser-app
       dockerfile: Dockerfile.pdf-parser
     volumes:
-      - ./pdf_files_to_parse:/app/pdf_files_to_parse
+      - ./pdf_files_to_parse:/app/pdf_files_to_parse # Structure with subdirectories
       - ./output_files:/app/output_files
       - ./p2ta-pdf-parser-app/logs:/app/logs # Ensure this directory is writable on the host machine
+      - type: tmpfs
+        target: /app/p2ta-pdf-parser-app/logs
     environment:
       - PYTHONUNBUFFERED=1
     security_opt:
@@ -23,7 +24,7 @@ services:
     volumes:
       - ./p2ta-pdf-parser-website:/app/p2ta-pdf-parser-website
       - ./p2ta-pdf-parser-app:/app/p2ta-pdf-parser-app
-      - ./pdf_files_to_parse:/app/pdf_files_to_parse
+      - ./pdf_files_to_parse:/app/pdf_files_to_parse # Ensure access to structured directories
       - ./output_files:/app/output_files
     ports:
       - "5000:5000"
