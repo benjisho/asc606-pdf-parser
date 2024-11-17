@@ -85,7 +85,7 @@ docker run --rm \
   -v "$(pwd)/pdf_files_to_parse:/app/pdf_files_to_parse" \
   -v "$(pwd)/output_files:/app/output_files" \
   -e PYTHONUNBUFFERED=1 \
-  benjisho/p2ta-pdf-parser:v2.0.0 --form_type asc606 --debug
+  benjisho/p2ta-pdf-parser:v2.0.1 --form_type asc606 --debug
 ```
 
 ### Option 3: Preferred - Running with Docker Compose
