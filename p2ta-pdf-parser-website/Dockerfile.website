@@ -4,20 +4,17 @@ FROM python:3.12.7-slim-bookworm
 # Set working directory
 WORKDIR /app
 
-# Install network utilities and dependencies
+# Install dependencies
 RUN apt-get update -y && apt install -y net-tools iputils-ping mtr
 
-# Copy the requirements file for Flask
+# Copy the requirements file
 COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Install clamd Python library to communicate with the ClamAV daemon
-RUN pip install clamd
 
 # Copy the Flask app
 COPY ./ /app/
 
-# Expose port 5000 for Flask
+# Expose port 5000
 EXPOSE 5000
 
 # Command to run the Flask app

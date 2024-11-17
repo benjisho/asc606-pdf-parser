@@ -2,10 +2,10 @@ import os
 import time
 import subprocess
 import logging
+import requests  # Add for Hugging Face API
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 import clamd  # For communicating with the ClamAV daemon
 import PyPDF2  # For verifying the file is a valid PDF
-import shutil  # For creating isolated temp directories
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # For flash messaging
@@ -15,6 +15,9 @@ UPLOAD_FOLDER = '/app/pdf_files_to_parse'
 OUTPUT_FOLDER = '/app/output_files'
 ALLOWED_EXTENSIONS = {'pdf'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+HUGGINGFACE_API_KEY = os.getenv('HUGGINGFACE_API_KEY')  # Add your API key here
+HUGGINGFACE_SUMMARY_MODEL = "facebook/bart-large-cnn"
 
 logging.basicConfig(level=logging.INFO)
 
@@ -117,6 +120,29 @@ def get_form_folder(form_type):
     os.makedirs(form_folder, exist_ok=True)
     return form_folder
 
+def generate_ai_summary(file_path):
+    """Generate an AI summary for the given text file."""
+    with open(file_path, 'r') as file:
+        text = file.read()
+
+    headers = {"Authorization": f"Bearer {HUGGINGFACE_API_KEY}"}
+    payload = {
+        "inputs": text,
+        "options": {"use_gpu": False}
+    }
+    try:
+        response = requests.post(
+            f"https://api-inference.huggingface.co/models/{HUGGINGFACE_SUMMARY_MODEL}",
+            headers=headers,
+            json=payload
+        )
+        response.raise_for_status()
+        result = response.json()
+        return result[0]['summary_text'] if result else "No summary generated."
+    except Exception as e:
+        logging.error(f"Failed to generate AI summary: {e}")
+        return None
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -128,6 +154,7 @@ def upload_file():
 
     file = request.files['file']
     form_type = request.form['form_type']  # Get the selected form type
+    generate_summary = request.form.get('generate_summary')  # Check if AI Summary is toggled
 
     if file.filename == '':
         return render_template('index.html', error_message="No selected file")
@@ -162,6 +189,13 @@ def upload_file():
             except subprocess.CalledProcessError as e:
                 logging.error(f"Parser failed: {e}")
                 return render_template('index.html', error_message="Parser failed.")
+
+        if generate_summary:
+            summary = generate_ai_summary(file_path)
+            if summary:
+                return render_template('index.html', ai_summary=summary, success_message="AI Summary generated.")
+            else:
+                return render_template('index.html', error_message="Failed to generate AI Summary.")
 
          # Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"

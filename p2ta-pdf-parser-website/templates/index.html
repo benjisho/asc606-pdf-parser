@@ -5,50 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
     <script src="https://unpkg.com/unlazy@0.11.3/dist/unlazy.with-hashing.iife.js" defer init></script>
-    <script type="text/javascript">
-      window.tailwind.config = {
-        darkMode: ['class'],
-        theme: {
-          extend: {
-            colors: {
-              border: 'hsl(var(--border))',
-              input: 'hsl(var(--input))',
-              ring: 'hsl(var(--ring))',
-              background: 'hsl(var(--background))',
-              foreground: 'hsl(var(--foreground))',
-              primary: {
-                DEFAULT: 'hsl(var(--primary))',
-                foreground: 'hsl(var(--primary-foreground))'
-              },
-              secondary: {
-                DEFAULT: 'hsl(var(--secondary))',
-                foreground: 'hsl(var(--secondary-foreground))'
-              },
-              destructive: {
-                DEFAULT: 'hsl(var(--destructive))',
-                foreground: 'hsl(var(--destructive-foreground))'
-              },
-              muted: {
-                DEFAULT: 'hsl(var(--muted))',
-                foreground: 'hsl(var(--muted-foreground))'
-              },
-              accent: {
-                DEFAULT: 'hsl(var(--accent))',
-                foreground: 'hsl(var(--accent-foreground))'
-              },
-              popover: {
-                DEFAULT: 'hsl(var(--popover))',
-                foreground: 'hsl(var(--popover-foreground))'
-              },
-              card: {
-                DEFAULT: 'hsl(var(--card))',
-                foreground: 'hsl(var(--card-foreground))'
-              },
-            },
-          }
-        }
-      }
-    </script>
+		<script type="text/javascript">
+			window.tailwind.config = {
+				darkMode: ['class'],
+				theme: {
+					extend: {
+						colors: {
+							border: 'hsl(var(--border))',
+							input: 'hsl(var(--input))',
+							ring: 'hsl(var(--ring))',
+							background: 'hsl(var(--background))',
+							foreground: 'hsl(var(--foreground))',
+							primary: {
+								DEFAULT: 'hsl(var(--primary))',
+								foreground: 'hsl(var(--primary-foreground))'
+							},
+							secondary: {
+								DEFAULT: 'hsl(var(--secondary))',
+								foreground: 'hsl(var(--secondary-foreground))'
+							},
+							destructive: {
+								DEFAULT: 'hsl(var(--destructive))',
+								foreground: 'hsl(var(--destructive-foreground))'
+							},
+							muted: {
+								DEFAULT: 'hsl(var(--muted))',
+								foreground: 'hsl(var(--muted-foreground))'
+							},
+							accent: {
+								DEFAULT: 'hsl(var(--accent))',
+								foreground: 'hsl(var(--accent-foreground))'
+							},
+							popover: {
+								DEFAULT: 'hsl(var(--popover))',
+								foreground: 'hsl(var(--popover-foreground))'
+							},
+							card: {
+								DEFAULT: 'hsl(var(--card))',
+								foreground: 'hsl(var(--card-foreground))'
+							},
+						},
+					}
+				}
+			}
+		</script>
+  </head>
+  <body>
     <link rel="stylesheet" href="/static/css/styles.css">
     <script defer src="/static/js/animation-for-working.js"></script>
   </head>
@@ -62,8 +64,8 @@
         action="/upload"
         method="POST"
         enctype="multipart/form-data"
-        class="flex flex-col items-center space-y-6 bg-card rounded-lg shadow-xl p-8 transition-transform transform hover:scale-105 duration-300"
-      >
+        class="flex flex-col items-center space-y-6 bg-card rounded-lg shadow-xl p-8 transition-transform transform hover:scale-105 duration-300 border border-accent"
+        >
         <label for="form_type" class="text-primary text-lg font-semibold">Select PDF Type you are about to Upload:</label>
         <select name="form_type" id="form_type" required class="bg-input text-primary rounded-lg px-4 py-2 border border-border">
           <option value="asc606">ASC 606 (Revenue)</option>
@@ -84,33 +86,60 @@
           id="file"
           accept=".pdf"
           required
-          class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-ring transition duration-200 hover:border-accent"
-        />
-    
-        <!-- Show error message if exists -->
+          class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-accent transition duration-200 hover:border-accent"
+          />
+
+          <p class="text-red-500 mt-2 hidden" id="error-message"></p>          <div class="flex items-center space-x-3">
+            <label for="ai-summary-toggle" class="text-primary text-lg font-semibold">Generate AI Summary:</label>
+            <input type="checkbox" id="ai-summary-toggle" class="hidden" />
+            <label for="ai-summary-toggle" class="relative inline-block w-12 h-6 cursor-pointer">
+              <span class="absolute inset-0 bg-secondary rounded-full transition-colors duration-300"></span>
+              <span class="absolute left-0 top-0 w-6 h-6 bg-secondary-foreground rounded-full transition-transform duration-300 transform"></span>
+            </label>
+          </div>
+          <input type="hidden" name="ai_summary" id="ai_summary" value="false" />
+          <div id="ai-summary-section" class="hidden mt-8">
+            <h3 class="text-primary text-xl font-semibold">AI-Generated Summary:</h3>
+            <pre class="bg-muted text-muted-foreground p-4 rounded-lg mt-2" id="ai-summary-content"></pre>
+          </div>
+
+          <!-- Show error message if exists -->
         {% if error_message %}
-        <p class="text-red-500 mt-2">{{ error_message }}</p>
+        <p id="error-message" class="text-destructive mt-2">{{ error_message }}</p>
         {% endif %}
+      
+        <button type="submit" class="bg-primary text-primary-foreground rounded-lg px-8 py-3 hover:bg-primary/80 transition-colors duration-300 shadow-lg transform hover:translate-y-1">
+          Upload
+        </button>
     
-        <button type="submit" class="bg-primary text-primary-foreground rounded-lg px-8 py-3 hover:bg-primary/80 transition-colors duration-300 shadow-lg transform hover:translate-y-1">Upload</button>
       </form>
-    
+
       <!-- Loading Message -->
       <div id="loading-message" class="hidden text-primary text-lg mt-8">
         Working<span id="dot-animation">...</span>
       </div>
-    
+
       <!-- Output Section -->
       <div id="output" class="mt-8 text-center">
         {% if success_message %}
         <p class="text-green-500 text-lg">{{ success_message }}</p>
         {% endif %}
-        
+
         {% if output_file %}
-        <p class="text-primary text-lg">Your PDF has been parsed! <a href="/download/{{ output_file }}" class="underline text-accent hover:text-accent/80">Click to download your text file here.</a></p>
+        <p class="text-primary text-lg">
+          Your PDF has been parsed! <a href="/download/{{ output_file }}" class="underline text-accent hover:text-accent/80">Click to download your text file here.</a>
+        </p>
+        {% endif %}
+
+        {% if ai_summary %}
+        <div class="bg-muted text-primary rounded-lg p-6 mt-8 shadow">
+          <h2 class="text-2xl font-bold mb-4">AI Summary:</h2>
+          <pre class="text-primary-foreground whitespace-pre-wrap">{{ ai_summary }}</pre>
+        </div>
         {% endif %}
       </div>
     </div>
 
   </body>
 </html>
+

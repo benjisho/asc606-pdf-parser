@@ -124,3 +124,49 @@ button:hover {
     background-color: #2980b9;
     transform: translateY(-2px);
 }
+
+/* Toggle switch container */
+.relative.inline-block {
+    position: relative;
+    display: inline-block;
+    width: 3rem;
+    height: 1.5rem;
+}
+
+/* Hide checkbox input */
+.relative.inline-block input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Background (on state) */
+.relative.inline-block input[type="checkbox"]:checked + span:first-child {
+    background-color: #74AA9C; /* Green when checked */
+}
+
+/* Background (off state) */
+.relative.inline-block > span:first-child {
+    background-color: rgb(239, 68, 68); /* Default red */
+    border-radius: 9999px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Toggle knob */
+.relative.inline-block > span:last-child {
+    background-color: #ffffff;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Knob position (on state) */
+.relative.inline-block input[type="checkbox"]:checked + span:first-child + span:last-child {
+    transform: translateX(1.5rem);
+}

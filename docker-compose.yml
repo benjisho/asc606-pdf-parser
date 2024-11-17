@@ -17,15 +17,17 @@ services:
     restart: unless-stopped
 
   website:
-    image: benjisho/p2ta-pdf-parser-website:v2.0.1
+    image: benjisho/p2ta-pdf-parser-website:v2.0.2
     build:
       context: ./p2ta-pdf-parser-website
       dockerfile: Dockerfile.website
     volumes:
       - ./p2ta-pdf-parser-website:/app/p2ta-pdf-parser-website
       - ./p2ta-pdf-parser-app:/app/p2ta-pdf-parser-app
-      - ./pdf_files_to_parse:/app/pdf_files_to_parse # Ensure access to structured directories
+      - ./pdf_files_to_parse:/app/pdf_files_to_parse
       - ./output_files:/app/output_files
     ports:
       - "5000:5000"
+    environment:
+        - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
     restart: unless-stopped
