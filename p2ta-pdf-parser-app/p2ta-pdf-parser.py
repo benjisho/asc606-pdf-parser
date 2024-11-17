@@ -11,7 +11,11 @@ args = parser.parse_args()
 
 logging_level = logging.DEBUG if args.debug else logging.INFO
 logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
-file_handler = logging.FileHandler('p2ta-pdf-parser-app/logs/p2ta_pdf_parser.log')
+
+logs_path = 'p2ta-pdf-parser-app/logs'
+os.makedirs(logs_path, exist_ok=True)
+file_handler = logging.FileHandler(os.path.join(logs_path, 'p2ta_pdf_parser.log'))
+
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logging.getLogger().addHandler(file_handler)
 
@@ -41,20 +45,23 @@ def main():
         logging.error(f"No parser found for form type: {form_type}")
         return
 
-    pdf_directory = "pdf_files_to_parse"
-    output_directory = "output_files"
+    # Use subdirectory based on form type
+    pdf_directory = os.path.join("pdf_files_to_parse", form_type)
+    logging.info(f"Looking for PDF files in directory: {pdf_directory}")
 
     if not os.path.exists(pdf_directory):
         logging.error(f"Directory not found: {pdf_directory}")
         return
 
+    output_directory = "output_files"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
+    # Get the list of PDF files in the specific directory
     pdf_files = [f for f in os.listdir(pdf_directory) if f.endswith('.pdf')]
     if not pdf_files:
-        logging.error("No PDF files found to parse.")
-        return
+        logging.error(f"No PDF files found in directory: {pdf_directory}")
+        return  # Exit early if no files found
 
     for pdf_file in pdf_files:
         pdf_path = os.path.join(pdf_directory, pdf_file)

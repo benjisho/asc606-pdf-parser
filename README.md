@@ -48,7 +48,8 @@ pip install -r requirements.txt
 
 ### Before You Run the Code
 
-1. Place PDFs for processing in `pdf_files_to_parse`.
+1. Place PDFs for processing in `pdf_files_to_parse/<the-relevant-directory>`.
+  > Example `pdf_files_to_parse/asc606/your-asc606-pdf-file.pdf`
 2. Run the script or use Docker commands below.
 3. Check `output_files` for generated text summaries.
 

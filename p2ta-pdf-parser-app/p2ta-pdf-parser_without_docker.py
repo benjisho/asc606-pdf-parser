@@ -44,29 +44,33 @@ def main():
         logging.error(f"No parser found for form type: {form_type}")
         return
 
-    pdf_directory = os.path.join(BASE_DIR, "pdf_files_to_parse")
-    output_directory = os.path.join(BASE_DIR, "output_files")
+    # Construct the subdirectory path based on form type
+    pdf_directory = os.path.join("pdf_files_to_parse", form_type)
+    
+    # Log the directory being searched
+    logging.info(f"Looking for PDF files in directory: {pdf_directory}")
 
+    # Check if the directory exists
     if not os.path.exists(pdf_directory):
         logging.error(f"Directory not found: {pdf_directory}")
         return
 
+    output_directory = "output_files"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
     pdf_files = [f for f in os.listdir(pdf_directory) if f.endswith('.pdf')]
     if not pdf_files:
-        logging.error("No PDF files found to parse.")
+        logging.error(f"No PDF files found to parse.")
         return
 
     for pdf_file in pdf_files:
         pdf_path = os.path.join(pdf_directory, pdf_file)
         output_path = os.path.join(output_directory, f"{os.path.splitext(pdf_file)[0]}.txt")
-        
+
         logging.info(f"Processing PDF: {pdf_path} with parser {parser_script}")
 
         try:
-            # Start the selected parser script only once for each file
             cmd = ['python3', parser_script]
             if args.debug:
                 cmd.append('--debug')

@@ -10,6 +10,7 @@ import shutil  # For creating isolated temp directories
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # For flash messaging
 
+# Update UPLOAD_FOLDER logic
 UPLOAD_FOLDER = '/app/pdf_files_to_parse'
 OUTPUT_FOLDER = '/app/output_files'
 ALLOWED_EXTENSIONS = {'pdf'}
@@ -110,6 +111,12 @@ def scan_with_clamav(file_path):
         logging.info("ClamAV is not available, skipping virus scan.")
         return True  # Assume clean if ClamAV is unavailable
 
+def get_form_folder(form_type):
+    """Ensure the upload directory exists for the given form type."""
+    form_folder = os.path.join(UPLOAD_FOLDER, form_type)
+    os.makedirs(form_folder, exist_ok=True)
+    return form_folder
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -127,7 +134,8 @@ def upload_file():
 
     if file and allowed_file(file.filename):
         # Save the uploaded file directly to `pdf_files_to_parse`
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        form_folder = get_form_folder(form_type)
+        file_path = os.path.join(form_folder, file.filename)
         file.save(file_path)
 
         # Set file permissions
@@ -146,9 +154,14 @@ def upload_file():
         # Route to the appropriate parser script
         parser_script = get_parser_script(form_type)
         if parser_script:
-            subprocess.run(['python3', parser_script], check=True)
-        else:
-            return render_template('index.html', error_message="Invalid form type selected.")
+            try:
+                if parser_script == "p2ta-pdf-parser.py":
+                    subprocess.run(['python3', parser_script, '--form_type', form_type], check=True)
+                else:
+                    subprocess.run(['python3', parser_script], check=True)
+            except subprocess.CalledProcessError as e:
+                logging.error(f"Parser failed: {e}")
+                return render_template('index.html', error_message="Parser failed.")
 
          # Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
