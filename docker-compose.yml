@@ -1,6 +1,6 @@
 services:
   p2ta-pdf-parser:
-    image: benjisho/p2ta-pdf-parser:v2.0.0
+    image: benjisho/p2ta-pdf-parser:v2.0.1
     build:
       context: ./p2ta-pdf-parser-app
       dockerfile: Dockerfile.pdf-parser
@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
 
   website:
-    image: benjisho/p2ta-pdf-parser-website:v2.0.0
+    image: benjisho/p2ta-pdf-parser-website:v2.0.1
     build:
       context: ./p2ta-pdf-parser-website
       dockerfile: Dockerfile.website
