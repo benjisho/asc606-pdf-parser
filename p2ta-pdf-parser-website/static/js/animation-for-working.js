@@ -1,20 +1,25 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("upload-form");
     const loadingMessage = document.getElementById("loading-message");
     const dotAnimation = document.getElementById("dot-animation");
     let dots = 0;
 
-    // Show loading message but keep form visible on submit
-    form.addEventListener("submit", function(event) {
-        loadingMessage.classList.remove("hidden");  // Show the loading message
+    // Ensure loading animation starts on form submit
+    form.addEventListener("submit", function (event) {
+        loadingMessage.classList.remove("hidden"); // Show loading message
+        if (dotAnimation) {
+            // Clear any existing intervals to avoid multiple animations
+            clearInterval(window.dotAnimationInterval);
 
-        // Animate the dots after "Working"
-        setInterval(function() {
-            dots = (dots + 1) % 4;
-            dotAnimation.innerHTML = ".".repeat(dots);  // Add 1 to 3 dots in a repeating loop
-        }, 500);  // 500ms interval for the dot animation
+            // Animate the dots after "Working"
+            window.dotAnimationInterval = setInterval(function () {
+                dots = (dots + 1) % 4;
+                dotAnimation.innerHTML = ".".repeat(dots); // Add 1 to 3 dots in a repeating loop
+            }, 500); // 500ms interval for the dot animation
+        }
     });
 });
+
 window.tailwind.config = {
     darkMode: ['class'],
     theme: {
@@ -58,13 +63,18 @@ window.tailwind.config = {
     }
 }
 // Toggle AI Summary Switch
-const aiSummaryToggle = document.getElementById('ai-summary-toggle');
-const aiSummaryInput = document.getElementById('ai_summary');
-aiSummaryToggle.addEventListener('change', () => {
-    const isEnabled = aiSummaryToggle.checked;
-    aiSummaryInput.value = isEnabled ? 'true' : 'false';
-    const toggleLabel = aiSummaryToggle.nextElementSibling;
-    toggleLabel.firstElementChild.classList.toggle('bg-[#74AA9C]', isEnabled); // Green when enabled
-    toggleLabel.firstElementChild.classList.toggle('bg-red-500', !isEnabled); // Red when disabled
-    toggleLabel.lastElementChild.classList.toggle('translate-x-6', isEnabled);
+document.addEventListener("DOMContentLoaded", function() {
+    const aiSummaryToggle = document.getElementById('ai-summary-toggle');
+    const aiSummaryInput = document.getElementById('ai_summary');
+
+    if (aiSummaryToggle) { // Only proceed if the toggle is present
+        aiSummaryToggle.addEventListener('change', () => {
+            const isEnabled = aiSummaryToggle.checked;
+            aiSummaryInput.value = isEnabled ? "true" : "false";
+            const toggleLabel = aiSummaryToggle.nextElementSibling;
+            toggleLabel.firstElementChild.classList.toggle('bg-[#74AA9C]', isEnabled); // Green when enabled
+            toggleLabel.firstElementChild.classList.toggle('bg-red-500', !isEnabled); // Red when disabled
+            toggleLabel.lastElementChild.classList.toggle('translate-x-6', isEnabled);
+        });
+    }
 });

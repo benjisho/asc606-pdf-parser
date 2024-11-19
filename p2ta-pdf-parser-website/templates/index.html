@@ -21,58 +21,75 @@
         enctype="multipart/form-data"
         class="flex flex-col items-center space-y-6 bg-card rounded-lg shadow-xl p-8 transition-transform transform hover:scale-105 duration-300 border border-accent"
         >
-    <label for="form_type" class="text-primary text-lg font-semibold">Select PDF Type you are about to Upload:</label>
-    <select name="form_type" id="form_type" required class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-accent transition duration-200 hover:border-accent">
-      <option value="asc606">ASC 606 (Revenue)</option>
-      <option value="asc842">ASC 842 (Leases)</option>
-      <option value="asc805">ASC 805 (Business Combinations)</option>
-      <option value="asc718">ASC 718 (Stock Compensation)</option>
-      <option value="asc815">ASC 815 (Derivatives and Hedging)</option>
-      <option value="ifrs15">IFRS 15 (International Revenue)</option>
-      <option value="asc450">ASC 450 (Contingencies)</option>
-      <option value="asc320">ASC 320 (Investments)</option>
-      <option value="asc330">ASC 330 (Inventory)</option>
-      <option value="asc250">ASC 250 (Accounting Changes)</option>
-    </select>
-    <label for="file" class="text-primary text-lg font-semibold">Upload your PDF:</label>
-    <input
-      type="file"
-      name="file"
-      id="file"
-      accept=".pdf"
-      required
-      class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-accent transition duration-200 hover:border-accent"
-    />
+      <label for="form_type" class="text-primary text-lg font-semibold">Select PDF Type you are about to Upload:</label>
+        <select name="form_type" id="form_type" required class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-accent transition duration-200 hover:border-accent">
+          <option value="asc606">ASC 606 (Revenue)</option>
+          <option value="asc842">ASC 842 (Leases)</option>
+          <option value="asc805">ASC 805 (Business Combinations)</option>
+          <option value="asc718">ASC 718 (Stock Compensation)</option>
+          <option value="asc815">ASC 815 (Derivatives and Hedging)</option>
+          <option value="ifrs15">IFRS 15 (International Revenue)</option>
+          <option value="asc450">ASC 450 (Contingencies)</option>
+          <option value="asc320">ASC 320 (Investments)</option>
+          <option value="asc330">ASC 330 (Inventory)</option>
+          <option value="asc250">ASC 250 (Accounting Changes)</option>
+        </select>
+      <label for="file" class="text-primary text-lg font-semibold">Upload your PDF:</label>
+      <input
+        type="file"
+        name="file"
+        id="file"
+        accept=".pdf"
+        required
+        class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-accent transition duration-200 hover:border-accent"
+      />
 
     <p class="text-red-500 mt-2 hidden" id="error-message"></p>
     <button type="submit" class="bg-accent text-accent-foreground rounded-lg px-8 py-3 hover:bg-accent/80 transition-colors duration-300 shadow-lg transform hover:translate-y-1">Upload</button>
-    <div class="flex items-center space-x-3">
-      <label for="ai-summary-toggle" class="text-primary text-lg font-semibold">Generate AI Summary:</label>
-      <input type="checkbox" id="ai-summary-toggle" class="hidden" />
-      <label for="ai-summary-toggle" class="relative inline-block w-12 h-6 cursor-pointer">
-        <span class="absolute inset-0 bg-secondary rounded-full transition-colors duration-300"></span>
-        <span class="absolute left-0 top-0 w-6 h-6 bg-secondary-foreground rounded-full transition-transform duration-300 transform"></span>
-      </label>
-    </div>
+    {% if ai_enabled %}
+      <div class="flex items-center space-x-3">
+        <label for="ai-summary-toggle" class="text-primary text-lg font-semibold">Generate AI Summary:</label>
+        <input type="checkbox" id="ai-summary-toggle" class="peer hidden" />
+        <label for="ai-summary-toggle" class="relative inline-block w-12 h-6 cursor-pointer">
+          <span class="absolute inset-0 bg-secondary rounded-full transition-colors duration-300"></span>
+          <span class="absolute left-0 top-0 w-6 h-6 bg-secondary-foreground rounded-full transition-transform duration-300 transform"></span>
+        </label>
+      </div>
     <input type="hidden" name="ai_summary" id="ai_summary" value="false" />
-
-    <p class="text-red-500 mt-2 hidden" id="error-message"></p>
-          <!-- Show error message if exists -->
-        {% if error_message %}
-        <p id="error-message" class="text-destructive mt-2">{{ error_message }}</p>
+    {% else %}
+    <p class="text-gray-500 text-lg">
+      AI Summary feature is not available.<br>
+      Please set the <span class="font-bold">`HUGGINGFACE_API_KEY`</span>.
+    </p>
         {% endif %}
+    
+    <p class="text-red-500 mt-2 hidden" id="error-message"></p>
+        <!-- Show error message if exists -->
+      {% if error_message %}
+      <p id="error-message" class="text-destructive mt-2">{{ error_message }}</p>
+      {% endif %}
   </form>
-  <div id="loading-message" class="hidden text-primary text-lg mt-8">Working<span id="dot-animation">...</span></div>
+  <div id="loading-message" class="hidden text-primary text-lg mt-8">
+      Working<span id="dot-animation">...</span>
+  </div>
   <div id="ai-summary-section" class="hidden mt-8">
     <h3 class="text-primary text-xl font-semibold">AI-Generated Summary:</h3>
     <pre class="bg-muted text-muted-foreground p-4 rounded-lg mt-2" id="ai-summary-content"></pre>
   </div>
   <div id="output" class="mt-8 text-center">
-    <p class="text-green-500 text-lg hidden" id="success-message"></p>
-    <p class="text-primary text-lg hidden" id="output-file-message">
-      Your PDF has been parsed! <a href="#" id="download-link" class="underline text-accent hover:text-accent/80">Click to download your text file here.</a>
-    </p>
+    <!-- Display success messages -->
+    {% if success_message %}
+    <p class="text-green-500 text-lg" id="success-message">{{ success_message }}</p>
+    {% endif %}
+
+    <!-- Display file download link -->
+    {% if output_file and download_link %}
+    <p class="text-primary text-lg" id="output-file-message">
+      <br>Your PDF has been parsed!
+      <br>To download your text file: <a href="{{ download_link }}" class="underline text-blue-600 font-bold hover:text-blue-800">Click Here</a>
+  </p>
+      {% endif %}
   </div>
-</div>
+  </div>
   </body>
 </html>

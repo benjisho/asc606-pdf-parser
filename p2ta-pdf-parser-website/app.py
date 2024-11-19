@@ -18,6 +18,12 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 HUGGINGFACE_API_KEY = os.getenv('HUGGINGFACE_API_KEY')  # Add your API key here
 HUGGINGFACE_SUMMARY_MODEL = "facebook/bart-large-cnn"
+if not HUGGINGFACE_API_KEY:
+    logging.warning("HUGGINGFACE_API_KEY is not set. AI summary feature will be disabled.")
+    AI_SUPPORT_ENABLED = False
+else:
+    AI_SUPPORT_ENABLED = True
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -122,6 +128,10 @@ def get_form_folder(form_type):
 
 def generate_ai_summary(file_path):
     """Generate an AI summary for the given text file."""
+    if not AI_SUPPORT_ENABLED:
+        logging.info("AI Summary feature is disabled because HUGGINGFACE_API_KEY is not set.")
+        return None
+
     with open(file_path, 'r') as file:
         text = file.read()
 
@@ -143,9 +153,10 @@ def generate_ai_summary(file_path):
         logging.error(f"Failed to generate AI summary: {e}")
         return None
 
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', ai_enabled=AI_SUPPORT_ENABLED)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -200,7 +211,14 @@ def upload_file():
          # Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
         success_message = "No viruses found. Parsing PDF..."
-        return render_template('index.html', output_file=output_file, success_message=success_message)
+        download_link = url_for('download_file', filename=output_file)
+
+        return render_template(
+            'index.html',
+            success_message=success_message,
+            output_file=output_file,
+            download_link=download_link
+        )
     else:
         return render_template('index.html', error_message="File type not allowed. Only PDF files are accepted.")
 

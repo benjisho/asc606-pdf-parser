@@ -88,6 +88,13 @@ button:hover {
     margin-top: 20px;
 }
 
+/* Style for dot animation in loading message */
+#dot-animation {
+    font-weight: bold;
+    font-size: 20px; /* Match the size of the "Working" text */
+    color: #3498db; /* Match the primary theme color */
+}
+
 /* Output container */
 #output {
     margin-top: 30px;
