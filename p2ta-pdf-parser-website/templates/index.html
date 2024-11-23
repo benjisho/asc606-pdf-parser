@@ -48,7 +48,7 @@
     <button type="submit" class="bg-accent text-accent-foreground rounded-lg px-8 py-3 hover:bg-accent/80 transition-colors duration-300 shadow-lg transform hover:translate-y-1">Upload</button>
 
     {% if ai_enabled %}
-      <div class="flex items-center space-x-3">
+    <div class="flex items-center space-x-3">
         <label for="ai-summary-toggle" class="text-primary text-lg font-semibold">Generate AI Summary:</label>
         <input type="hidden" name="ai_summary" id="ai_summary" value="false" />
         <input type="checkbox" id="ai-summary-toggle" name="ai_summary" value="true" class="peer hidden" />
@@ -56,15 +56,14 @@
           <span class="absolute inset-0 bg-secondary rounded-full transition-colors duration-300"></span>
           <span class="absolute left-0 top-0 w-6 h-6 bg-secondary-foreground rounded-full transition-transform duration-300 transform"></span>
         </label>
-      </div>
-    <input type="hidden" name="ai_summary" id="ai_summary" value="false" />
+    </div>
     {% else %}
     <p class="text-gray-500 text-lg">
       AI Summary feature is not available.<br>
       Please set the <span class="font-bold">`HUGGINGFACE_API_KEY`</span>.
     </p>
-    {% endif %} 
-
+    {% endif %}
+    
     <p class="text-red-500 mt-2 hidden" id="error-message"></p>
         <!-- Show error message if exists -->
       {% if error_message %}

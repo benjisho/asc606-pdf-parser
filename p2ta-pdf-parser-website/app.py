@@ -196,21 +196,22 @@ def generate_ai_summary(file_path):
 
 @app.route('/')
 def index():
-    huggingface_key_available = bool(os.getenv('HUGGINGFACE_API_KEY'))
+    huggingface_key_available = bool(os.getenv('HUGGINGFACE_API_KEY'))  # Dynamically check the key
     logging.debug(f"HUGGINGFACE_API_KEY detected: {huggingface_key_available}")
     return render_template('index.html', ai_enabled=huggingface_key_available)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    huggingface_key_available = bool(os.getenv('HUGGINGFACE_API_KEY'))  # Dynamic check for key
     if 'file' not in request.files:
-        return render_template('index.html', error_message="No file part in the request")
+        return render_template('index.html', ai_enabled=huggingface_key_available, error_message="No file part in the request")
 
     file = request.files['file']
     form_type = request.form.get('form_type')  # Get the selected form type
     generate_summary = request.form.get('ai_summary', 'false').lower() == 'true'  # Check if AI Summary is toggled
 
     if not file or file.filename == '':
-        return render_template('index.html', error_message="No selected file")
+        return render_template('index.html', ai_enabled=huggingface_key_available, error_message="No selected file")
 
     if allowed_file(file.filename):
         # Save the uploaded file directly to `pdf_files_to_parse`
@@ -224,12 +225,12 @@ def upload_file():
         # Scan the uploaded file with ClamAV daemon for viruses, if available
         if not scan_with_clamav(file_path):
             os.remove(file_path)  # Remove file if it's infected
-            return render_template('index.html', error_message="File contains a virus or could not be scanned!")
+            return render_template('index.html', ai_enabled=huggingface_key_available, error_message="File contains a virus or could not be scanned!")
 
         # Check if the file is a valid PDF
         if not is_valid_pdf(file_path):
             os.remove(file_path)  # Remove invalid files
-            return render_template('index.html', error_message="Invalid or corrupted PDF file.")
+            return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Invalid or corrupted PDF file.")
 
         # Route to the appropriate parser script
         parser_script = get_parser_script(form_type)
@@ -241,7 +242,7 @@ def upload_file():
                     subprocess.run(['python3', parser_script], check=True)
             except subprocess.CalledProcessError as e:
                 logging.error(f"Parser failed: {e}")
-                return render_template('index.html', error_message="Parser failed.")
+                return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Parser failed.")
 
         # Generate AI summary if toggled
         if generate_summary:
@@ -249,13 +250,12 @@ def upload_file():
             if os.path.exists(output_txt_file):  # Ensure the text file exists before summarizing
                 summary = generate_ai_summary(output_txt_file)
                 if summary:
-                    return render_template('index.html', ai_summary=summary, success_message="AI Summary generated.")
+                    return render_template('index.html', ai_summary=summary, ai_enabled=huggingface_key_available, success_message="AI Summary generated.")
                 else:
-                    return render_template('index.html', error_message="Failed to generate AI Summary.")
+                    return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Failed to generate AI Summary.")
             else:
                 logging.error(f"Text file for summarization not found: {output_txt_file}")
-                return render_template('index.html', error_message="Text file not found for summarization.")
-
+                return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Text file not found for summarization.")
 
         # Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
@@ -264,13 +264,13 @@ def upload_file():
 
         return render_template(
             'index.html',
+            ai_enabled=huggingface_key_available,
             success_message=success_message,
             output_file=output_file,
             download_link=download_link
         )
     else:
-        return render_template('index.html', error_message="File type not allowed. Only PDF files are accepted.")
-
+        return render_template('index.html', ai_enabled=huggingface_key_available, error_message="File type not allowed. Only PDF files are accepted.")
 
 @app.route('/download/<filename>')
 def download_file(filename):
