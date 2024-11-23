@@ -78,3 +78,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const summarySection = document.getElementById("ai-summary-section");
+    if (summarySection.scrollHeight > summarySection.clientHeight) {
+        summarySection.style.overflowY = "scroll";
+    }
+});

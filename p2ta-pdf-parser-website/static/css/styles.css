@@ -141,6 +141,33 @@ button:hover {
     transform: translateY(-2px);
 }
 
+#ai-summary-section {
+    max-height: 400px; /* Limit height */
+    overflow-y: auto; /* Enable scrolling */
+    width: 50%; /* Keep responsive width */
+    padding: 1rem;
+    margin: 0 auto; /* Center alignment */
+    background-color: #f8f9fa; /* Light background */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    #ai-summary-section {
+        max-height: 300px;
+        width: 95%; /* Allow a bit of margin for small screens */
+    }
+}
+
 @layer base {
     :root {
         --background: 0 0% 100%;

@@ -165,7 +165,7 @@ def generate_ai_summary(file_path):
     # Prepare payload for Hugging Face API
     headers = {"Authorization": f"Bearer {HUGGINGFACE_API_KEY}"}
     payload = {
-        "inputs": f"Imagine you are an accountant that reads this file, write the most important points and summarize the following text and format the output in Markdown.\n\n{text[:1024]}",
+        "inputs": f"Summarize the following text as an accountant with structured Markdown. Use headings (e.g., ## Topic), bullet points, and numbered lists for clarity:\n\n{text[:1024]}",
         "options": {"use_gpu": False}
     }
 
@@ -181,6 +181,7 @@ def generate_ai_summary(file_path):
             response.raise_for_status()
             result = response.json()
 
+            # Ensure only the summary text is extracted
             if isinstance(result, list) and 'summary_text' in result[0]:
                 return result[0]['summary_text']
             else:
@@ -250,11 +251,13 @@ def upload_file():
                 if os.path.exists(output_txt_file):  # Ensure the text file exists before summarizing
                     summary = generate_ai_summary(output_txt_file)
                     if summary:
+                        # Pass only the AI output
                         import markdown
                         summary_html = markdown.markdown(summary)  # Convert Markdown to HTML
+                        logging.info(f"AI Summary Output: {summary_html}")
                         return render_template(
                             'index.html',
-                            ai_summary=summary_html,  # Pass HTML-rendered Markdown
+                            ai_summary=summary_html,  # Only the AI-generated summary is passed
                             ai_enabled=huggingface_key_available,
                             success_message="AI Summary generated."
                         )
