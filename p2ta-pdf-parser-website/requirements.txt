@@ -5,3 +5,4 @@ PyPDF2==3.0.1
 clamd==1.0.2
 requests==2.32.3
 transformers==4.46.2
+Markdown==3.7

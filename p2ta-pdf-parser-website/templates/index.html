@@ -75,10 +75,11 @@
   </div>
   <div id="ai-summary-section" class="mt-8">
     <h3 class="text-primary text-xl font-semibold">AI-Generated Summary:</h3>
-    <pre class="text-left bg-muted text-muted-foreground p-4 rounded-lg mt-2 font-mono whitespace-pre-wrap break-words text-blue-700">
-        {{ ai_summary }}
-    </pre>
+    <div class="text-left bg-muted text-muted-foreground p-4 rounded-lg mt-2 font-mono whitespace-pre-wrap break-words text-blue-700">
+      {{ ai_summary|safe }}
+    </div>
   </div>
+  
   <div id="output" class="mt-8 text-center">
   <!-- Display success messages -->
   {% if success_message %}

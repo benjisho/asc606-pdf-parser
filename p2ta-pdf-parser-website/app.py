@@ -165,7 +165,7 @@ def generate_ai_summary(file_path):
     # Prepare payload for Hugging Face API
     headers = {"Authorization": f"Bearer {HUGGINGFACE_API_KEY}"}
     payload = {
-        "inputs": text[:1024],  # Truncate input to 1024 characters
+        "inputs": f"Imagine you are an accountant that reads this file, write the most important points and summarize the following text and format the output in Markdown.\n\n{text[:1024]}",
         "options": {"use_gpu": False}
     }
 
@@ -243,19 +243,26 @@ def upload_file():
             except subprocess.CalledProcessError as e:
                 logging.error(f"Parser failed: {e}")
                 return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Parser failed.")
-
-        # Generate AI summary if toggled
-        if generate_summary:
-            output_txt_file = os.path.join(OUTPUT_FOLDER, f"{os.path.splitext(file.filename)[0]}.txt")
-            if os.path.exists(output_txt_file):  # Ensure the text file exists before summarizing
-                summary = generate_ai_summary(output_txt_file)
-                if summary:
-                    return render_template('index.html', ai_summary=summary, ai_enabled=huggingface_key_available, success_message="AI Summary generated.")
+            
+            # Generate AI summary if toggled
+            if generate_summary:
+                output_txt_file = os.path.join(OUTPUT_FOLDER, f"{os.path.splitext(file.filename)[0]}.txt")
+                if os.path.exists(output_txt_file):  # Ensure the text file exists before summarizing
+                    summary = generate_ai_summary(output_txt_file)
+                    if summary:
+                        import markdown
+                        summary_html = markdown.markdown(summary)  # Convert Markdown to HTML
+                        return render_template(
+                            'index.html',
+                            ai_summary=summary_html,  # Pass HTML-rendered Markdown
+                            ai_enabled=huggingface_key_available,
+                            success_message="AI Summary generated."
+                        )
+                    else:
+                        return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Failed to generate AI Summary.")
                 else:
-                    return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Failed to generate AI Summary.")
-            else:
-                logging.error(f"Text file for summarization not found: {output_txt_file}")
-                return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Text file not found for summarization.")
+                    logging.error(f"Text file for summarization not found: {output_txt_file}")
+                    return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Text file not found for summarization.")
 
         # Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
