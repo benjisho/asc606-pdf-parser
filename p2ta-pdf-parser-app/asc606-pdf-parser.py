@@ -20,8 +20,18 @@ file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(mes
 logging.getLogger().addHandler(file_handler)
 logging.getLogger().setLevel(logging.INFO)
 
-# Step 1: Extract text from PDF using PyMuPDF
+# Helper function to sanitize text
+def sanitize_text(text):
+    """Sanitize text by removing problematic characters."""
+    try:
+        sanitized_text = text.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
+        sanitized_text = re.sub(r'\s+', ' ', sanitized_text).strip()  # Remove extra whitespace
+        return sanitized_text
+    except Exception as e:
+        logging.error(f"Error during text sanitization: {e}")
+        return ""
 
+# Step 1: Extract text from PDF using PyMuPDF
 def extract_text_from_pdf(pdf_path):
     try:
         logging.info(f"Extracting text from PDF file: {pdf_path}")
@@ -172,6 +182,11 @@ def main():
                 continue
             # Clean and preprocess the extracted text
             text = re.sub(r'\s+', ' ', text).strip()  # Remove extra whitespace and special characters
+            # Sanitize the extracted text
+            sanitized_text = sanitize_text(text)
+            if not sanitized_text:
+                logging.error("Sanitized text is empty or invalid. Skipping.")
+                continue
             # Summarize the key information based on the extracted text
             summary = summarize_pdf_contents(text)
             # Write the summary to a text file
