@@ -14,7 +14,7 @@ logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %
 
 logs_path = 'p2ta-pdf-parser-app/logs'
 os.makedirs(logs_path, exist_ok=True)
-file_handler = logging.FileHandler(os.path.join(logs_path, 'p2ta_pdf_parser.log'))
+file_handler = logging.FileHandler(os.path.join(logs_path, 'p2ta_pdf_parser.log'), mode='a')  # Append to logs
 
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logging.getLogger().addHandler(file_handler)

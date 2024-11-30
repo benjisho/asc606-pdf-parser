@@ -79,7 +79,23 @@
         {{ ai_summary|safe }}
     </div>
   </div>
-  
+  <!-- Question section -->
+  <div id="question-section" class="mt-8">
+    <h3 class="text-primary text-xl font-semibold">Ask a Question:</h3>
+    <form action="/ask" method="POST" class="flex flex-col space-y-4">
+        <textarea
+            name="user_query"
+            id="user_query"
+            rows="4"
+            placeholder="What would you like to know about your uploaded document?"
+            class="bg-input text-primary rounded-lg px-4 py-2 border border-border focus:outline-none focus:ring focus:ring-accent transition duration-200 hover:border-accent"
+        ></textarea>
+        <button type="submit" class="bg-accent text-accent-foreground rounded-lg px-6 py-3 hover:bg-accent/80 transition-colors duration-300">
+            Ask
+        </button>
+    </form>
+  </div>
+
   <div id="output" class="mt-8 text-center">
   <!-- Display success messages -->
   {% if success_message %}

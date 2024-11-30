@@ -29,5 +29,5 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     restart: unless-stopped

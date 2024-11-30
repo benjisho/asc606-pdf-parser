@@ -2,7 +2,6 @@ import os
 import time
 import subprocess
 import logging
-import requests  # Add for Hugging Face API
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 import clamd  # For communicating with the ClamAV daemon
 import PyPDF2  # For verifying the file is a valid PDF
@@ -15,14 +14,6 @@ UPLOAD_FOLDER = '/app/pdf_files_to_parse'
 OUTPUT_FOLDER = '/app/output_files'
 ALLOWED_EXTENSIONS = {'pdf'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-HUGGINGFACE_API_KEY = os.getenv('HUGGINGFACE_API_KEY')  # Add your API key here
-HUGGINGFACE_SUMMARY_MODEL = "facebook/bart-large-cnn"
-if not HUGGINGFACE_API_KEY:
-    logging.warning("HUGGINGFACE_API_KEY is not set. AI summary feature will be disabled.")
-    AI_SUPPORT_ENABLED = False
-else:
-    AI_SUPPORT_ENABLED = True
 
 logging.basicConfig(level=logging.INFO)
 
@@ -129,93 +120,63 @@ def sanitize_text(text):
     """Sanitize text by removing problematic characters."""
     return text.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
 
+import openai
+# Configure OpenAI API Key
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  # Add your API key here
+if not OPENAI_API_KEY:
+    logging.warning("OPENAI_API_KEY is not set. AI summary feature will be disabled.")
+    AI_SUPPORT_ENABLED = False
+else:
+    AI_SUPPORT_ENABLED = True
+    openai.api_key = OPENAI_API_KEY  # Configure the global OpenAI client
+
 
 def generate_ai_summary(file_path):
-    """Generate an AI summary for the given text file."""
-    if not AI_SUPPORT_ENABLED:
-        logging.info("AI Summary feature is disabled because HUGGINGFACE_API_KEY is not set.")
-        return "AI Summary feature is disabled."
-
+    """Generate an AI summary for the given text file using OpenAI."""
     try:
-        # Read and sanitize the file content
+        # Read the file content for summarization
         with open(file_path, 'r', encoding='utf-8') as file:
             text = file.read()
-        text = sanitize_text(text)  # Ensure the text is sanitized
-    except FileNotFoundError as e:
-        logging.error(f"File not found: {file_path}")
-        return "Error: Text file not found for summarization."
-    except UnicodeDecodeError as e:
-        logging.warning(f"UnicodeDecodeError encountered: {e}. Attempting re-encoding.")
-        try:
-            # Handle decoding error by re-encoding the file
-            with open(file_path, 'rb') as file:
-                raw_data = file.read()
-            text = raw_data.decode('latin1').encode('utf-8').decode('utf-8')
-        except Exception as inner_e:
-            logging.error(f"Re-encoding failed: {inner_e}")
-            return "Error: Failed to decode the text file."
+
+        # Truncate text to fit within token limits
+        truncated_text = text[:2048]
+
+        # Call OpenAI for summarization
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are an AI assistant specializing in accounting document summaries. Provide a concise summary."},
+                {"role": "user", "content": f"Please summarize the following document:\n\n{truncated_text}"}
+            ]
+        )
+        summary = response["choices"][0]["message"]["content"].strip()
+        return summary
+
     except Exception as e:
-        logging.error(f"Unexpected error reading file for AI summary: {e}")
-        return "Error reading the text file for summarization."
-
-    if not text.strip():
-        logging.warning("The input text for summarization is empty.")
-        return "The file contains no text for summarization."
-
-    # Prepare payload for Hugging Face API
-    headers = {"Authorization": f"Bearer {HUGGINGFACE_API_KEY}"}
-    payload = {
-        "inputs": f"Summarize the following text as an accountant with structured Markdown. Use headings (e.g., ## Topic), bullet points, and numbered lists for clarity:\n\n{text[:1024]}",
-        "options": {"use_gpu": False}
-    }
-
-    # Attempt API call with retries
-    for attempt in range(3):  # Retry up to 3 times
-        try:
-            response = requests.post(
-                f"https://api-inference.huggingface.co/models/{HUGGINGFACE_SUMMARY_MODEL}",
-                headers=headers,
-                json=payload,
-                timeout=30
-            )
-            response.raise_for_status()
-            result = response.json()
-
-            # Ensure only the summary text is extracted
-            if isinstance(result, list) and 'summary_text' in result[0]:
-                return result[0]['summary_text']
-            else:
-                logging.warning(f"Unexpected response format: {result}")
-                return "No summary generated."
-        except requests.exceptions.HTTPError as e:
-            logging.error(f"HTTPError during Hugging Face API request (attempt {attempt + 1}/3): {e}")
-            if attempt == 2:  # On final attempt, fail
-                return "Failed to connect to the AI summarization service."
-        except Exception as e:
-            logging.error(f"Unexpected error during AI summarization: {e}")
-            return "An unexpected error occurred while generating the summary."
+        logging.error(f"Error during AI summarization: {e}")
+        return "An unexpected error occurred while generating the summary."
 
 @app.route('/')
 def index():
-    huggingface_key_available = bool(os.getenv('HUGGINGFACE_API_KEY'))  # Dynamically check the key
-    logging.debug(f"HUGGINGFACE_API_KEY detected: {huggingface_key_available}")
-    return render_template('index.html', ai_enabled=huggingface_key_available)
+    openai_key_available = bool(os.getenv('OPENAI_API_KEY'))  # Dynamically check the key
+    logging.debug(f"OPENAI_API_KEY detected: {openai_key_available}")
+    return render_template('index.html', ai_enabled=openai_key_available)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    huggingface_key_available = bool(os.getenv('HUGGINGFACE_API_KEY'))  # Dynamic check for key
+    openai_key_available = bool(os.getenv('OPENAI_API_KEY'))  # Check for OpenAI API key
     if 'file' not in request.files:
-        return render_template('index.html', ai_enabled=huggingface_key_available, error_message="No file part in the request")
+        return render_template('index.html', ai_enabled=openai_key_available, error_message="No file part in the request")
 
     file = request.files['file']
     form_type = request.form.get('form_type')  # Get the selected form type
     generate_summary = request.form.get('ai_summary', 'false').lower() == 'true'  # Check if AI Summary is toggled
 
     if not file or file.filename == '':
-        return render_template('index.html', ai_enabled=huggingface_key_available, error_message="No selected file")
+        return render_template('index.html', ai_enabled=openai_key_available, error_message="No selected file")
 
     if allowed_file(file.filename):
-        # Save the uploaded file directly to `pdf_files_to_parse`
+        # Save the uploaded file
         form_folder = get_form_folder(form_type)
         file_path = os.path.join(form_folder, file.filename)
         file.save(file_path)
@@ -223,49 +184,38 @@ def upload_file():
         # Set file permissions
         os.chmod(file_path, 0o644)
 
-        # Scan the uploaded file with ClamAV daemon for viruses, if available
+        # Scan the uploaded file with ClamAV, if available
         if not scan_with_clamav(file_path):
-            os.remove(file_path)  # Remove file if it's infected
-            return render_template('index.html', ai_enabled=huggingface_key_available, error_message="File contains a virus or could not be scanned!")
+            os.remove(file_path)
+            return render_template('index.html', ai_enabled=openai_key_available, error_message="File contains a virus or could not be scanned!")
 
         # Check if the file is a valid PDF
         if not is_valid_pdf(file_path):
-            os.remove(file_path)  # Remove invalid files
-            return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Invalid or corrupted PDF file.")
+            os.remove(file_path)
+            return render_template('index.html', ai_enabled=openai_key_available, error_message="Invalid or corrupted PDF file.")
 
-        # Route to the appropriate parser script
-        parser_script = get_parser_script(form_type)
-        if parser_script:
-            try:
-                if parser_script == "p2ta-pdf-parser.py":
-                    subprocess.run(['python3', parser_script, '--form_type', form_type], check=True)
+        # Generate AI summary if toggled
+        if generate_summary:
+            output_txt_file = os.path.join(OUTPUT_FOLDER, f"{os.path.splitext(file.filename)[0]}.txt")
+            # Ensure the text file exists before summarizing
+            if os.path.exists(output_txt_file):
+                summary = generate_ai_summary(output_txt_file)
+                if summary:
+                    # Convert summary to HTML
+                    import markdown
+                    summary_html = markdown.markdown(summary)
+                    logging.info(f"AI Summary Output: {summary_html}")
+                    return render_template(
+                        'index.html',
+                        ai_summary=summary_html,
+                        ai_enabled=openai_key_available,
+                        success_message="AI Summary generated."
+                    )
                 else:
-                    subprocess.run(['python3', parser_script], check=True)
-            except subprocess.CalledProcessError as e:
-                logging.error(f"Parser failed: {e}")
-                return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Parser failed.")
-            
-            # Generate AI summary if toggled
-            if generate_summary:
-                output_txt_file = os.path.join(OUTPUT_FOLDER, f"{os.path.splitext(file.filename)[0]}.txt")
-                if os.path.exists(output_txt_file):  # Ensure the text file exists before summarizing
-                    summary = generate_ai_summary(output_txt_file)
-                    if summary:
-                        # Pass only the AI output
-                        import markdown
-                        summary_html = markdown.markdown(summary)  # Convert Markdown to HTML
-                        logging.info(f"AI Summary Output: {summary_html}")
-                        return render_template(
-                            'index.html',
-                            ai_summary=summary_html,  # Only the AI-generated summary is passed
-                            ai_enabled=huggingface_key_available,
-                            success_message="AI Summary generated."
-                        )
-                    else:
-                        return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Failed to generate AI Summary.")
-                else:
-                    logging.error(f"Text file for summarization not found: {output_txt_file}")
-                    return render_template('index.html', ai_enabled=huggingface_key_available, error_message="Text file not found for summarization.")
+                    return render_template('index.html', ai_enabled=openai_key_available, error_message="Failed to generate AI Summary.")
+            else:
+                logging.error(f"Text file for summarization not found: {output_txt_file}")
+                return render_template('index.html', ai_enabled=openai_key_available, error_message="Text file not found for summarization.")
 
         # Output the result file and display success message
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
@@ -274,17 +224,52 @@ def upload_file():
 
         return render_template(
             'index.html',
-            ai_enabled=huggingface_key_available,
+            ai_enabled=openai_key_available,
             success_message=success_message,
             output_file=output_file,
             download_link=download_link
         )
     else:
-        return render_template('index.html', ai_enabled=huggingface_key_available, error_message="File type not allowed. Only PDF files are accepted.")
+        return render_template('index.html', ai_enabled=openai_key_available, error_message="File type not allowed. Only PDF files are accepted.")
 
 @app.route('/download/<filename>')
 def download_file(filename):
     return send_from_directory(OUTPUT_FOLDER, filename, as_attachment=True)
+
+@app.route('/ask', methods=['POST'])
+def ask_question():
+    user_query = request.form.get('user_query', None)
+    if not user_query:
+        return render_template('index.html', error_message="Please enter a question to ask.")
+
+    # Assume the last uploaded file is used
+    uploaded_file_path = os.path.join(OUTPUT_FOLDER, "last_uploaded_file.txt")
+
+    if os.path.exists(uploaded_file_path):
+        with open(uploaded_file_path, 'r', encoding='utf-8') as file:
+            text = file.read()
+
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are an AI assistant specializing in accounting document summaries. Provide a concise summary."},
+                    {"role": "user", "content": f"Please summarize the following document:\n\n{truncated_text}"}
+                ]
+            )
+            answer = response["choices"][0]["message"]["content"].strip()
+
+            return render_template(
+                'index.html',
+                success_message="Here's the response to your question.",
+                ai_summary=answer
+            )
+
+        except Exception as e:
+            logging.error(f"Error answering question: {e}")
+            return render_template('index.html', error_message="An unexpected error occurred while answering your question.")
+    else:
+        return render_template('index.html', error_message="No document available for querying.")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
