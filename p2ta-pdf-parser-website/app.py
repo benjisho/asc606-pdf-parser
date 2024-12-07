@@ -143,10 +143,38 @@ def generate_ai_summary(file_path):
 
         # Call OpenAI for summarization
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4",
             messages=[
-                {"role": "system", "content": "You are an AI assistant specializing in accounting document summaries. Provide a concise summary."},
-                {"role": "user", "content": f"Please summarize the following document:\n\n{truncated_text}"}
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an advanced AI assistant with expertise in accounting, financial reporting, and regulatory compliance. "
+                        "Your goal is to provide a professional, detailed, and structured summary of the provided document, tailored to accountants, auditors, and financial professionals. "
+                        "Your analysis should be insightful, accurate, and concise, addressing the implications of the document's content for compliance and accounting practices. "
+                        "Ensure your response is highly organized, easy to navigate, and provides actionable insights for decision-making."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"Analyze the following document:\n\n"
+                        f"{truncated_text}\n\n"
+                        "Please structure your summary to include the following:\n"
+                        "1. **Well-defined Sections:** Break the content into logical sections with clear and descriptive headings.\n"
+                        "2. **Key Highlights:** Summarize the main points of each section, including critical details such as:\n"
+                        "   - Numbers (e.g., thresholds, percentages, monetary values).\n"
+                        "   - Dates (e.g., deadlines, effective dates).\n"
+                        "   - References to rules, regulations, or standards.\n"
+                        "3. **Practical Implications:** Explain the significance of each section's content for accountants and auditors, with a focus on real-world application.\n"
+                        "4. **Examples:** Where possible, provide examples or scenarios that illustrate the rules or guidelines mentioned.\n"
+                        "5. **Overall Takeaways:** Conclude with a brief overview of the document's purpose and its implications for financial and regulatory practices.\n\n"
+                        "The output must be formatted with:\n"
+                        "- Headings and subheadings for each section.\n"
+                        "- Bullet points for concise listing of details.\n"
+                        "- Explanatory paragraphs where necessary to elaborate on points.\n\n"
+                        "Your analysis should ensure clarity and usefulness for professionals in the accounting field."
+                    )
+                }
             ]
         )
         summary = response["choices"][0]["message"]["content"].strip()
@@ -253,7 +281,7 @@ def ask_question():
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": "You are an AI assistant specializing in accounting document summaries. Provide a concise summary."},
+                    {"role": "system", "content": "You are an AI assistant specializing in accounting document summaries. Provide a concise summary. I specifically want you to give information about each and every section that could initially interest an accountant"},
                     {"role": "user", "content": f"Please summarize the following document:\n\n{truncated_text}"}
                 ]
             )
