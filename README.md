@@ -13,6 +13,9 @@ This project is a Python-based solution designed to parse PDF documents related 
   - [Option 2: Running with Docker](#option-2-running-with-docker)
   - [Option 3: Preferred - Running with Docker Compose](#option-3-preferred---running-with-docker-compose)
     - [OPTIONAL: Enabling Antivirus Scanning in Docker Compose](#optional-enabling-antivirus-scanning-in-docker-compose)
+- [Add HTTPS Support](#add-https-support)
+  - [Generate SSL self-signed certificate into `certs/` directory](#generate-ssl-self-signed-certificate-into-certs-directory)
+  - [Enable HTTPS in the `docker-compose.yml`](#enable-https-in-the-docker-composeyml)
 - [Logging](#logging)
 - [Notes](#notes)
 - [License](#license)
@@ -120,6 +123,37 @@ docker compose -f docker-compose.yml -f ./virus-protection/clamav/docker-compose
 ```
 
 > **Note:** ClamAV takes a few moments to initialize. The web application will automatically attempt to connect to ClamAV, retrying until ClamAV is available for scans.
+
+## Add HTTPS Support
+
+### Generate SSL self-signed certificate into `certs/` directory
+
+> **Note:** This section is relevant if you haven't generated a well-known SSL certificate from a certified authority.
+> These will guide you on creating a self-signed certificate, useful for testing or development purposes.
+
+1. Run the following command to generate a 2048-bit RSA private key, which is used to decrypt traffic:
+
+```bash
+openssl genrsa -out nginx/ssl/server.key 2048
+```
+
+2. Run the following command to generate a certificate, using the private key from the previous step.
+
+```bash
+openssl req -new -key nginx/ssl/server.key -out nginx/ssl/server.csr
+```
+
+3. Run the following command to self-sign the certificate with the private key, for a period of validity of 365 days:
+
+```bash
+openssl x509 -req -days 365 -in nginx/ssl/server.csr -signkey nginx/ssl/server.key -out nginx/ssl/server.crt
+```
+
+4. Copy the certificate file to the certificate directory `nginx/ssl/`
+
+### Enable HTTPS in the `docker-compose.yml`
+
+5. Uncommment the HTTPS Nginx server service in the `docker-compose.yml`
 
 ## Logging
 
