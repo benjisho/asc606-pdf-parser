@@ -1,6 +1,9 @@
 # PDF files
 output_files/*.*
 
+# SSL
+nginx/ssl/*.*
+
 #### PDF files
 *.pdf
 # - Portable Document Format (PDF): The most common and widely used format for electronic documents.
