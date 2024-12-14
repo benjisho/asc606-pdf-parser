@@ -213,3 +213,10 @@ pre {
 --ring: 212.7 26.8% 83.9;
     }
 }
+#chatbox {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    height: 300px;
+    overflow-y: scroll;
+  }  

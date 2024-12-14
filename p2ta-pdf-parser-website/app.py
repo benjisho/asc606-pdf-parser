@@ -2,7 +2,7 @@ import os
 import time
 import subprocess
 import logging
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
+from flask import Flask, render_template, jsonify, request, session, url_for, send_from_directory, flash
 import clamd  # For communicating with the ClamAV daemon
 import PyPDF2  # For verifying the file is a valid PDF
 
@@ -143,7 +143,7 @@ def generate_ai_summary(file_path):
 
         # Call OpenAI for summarization
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=[
                 {
                     "role": "system",
@@ -190,72 +190,103 @@ def index():
     logging.debug(f"OPENAI_API_KEY detected: {openai_key_available}")
     return render_template('index.html', ai_enabled=openai_key_available)
 
+file_data = {}
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    openai_key_available = bool(os.getenv('OPENAI_API_KEY'))  # Check for OpenAI API key
+    session_id = str(time.time())
+    session['session_id'] = session_id
+
+    openai_key_available = bool(os.getenv('OPENAI_API_KEY'))
     if 'file' not in request.files:
         return render_template('index.html', ai_enabled=openai_key_available, error_message="No file part in the request")
 
     file = request.files['file']
-    form_type = request.form.get('form_type')  # Get the selected form type
-    generate_summary = request.form.get('ai_summary', 'false').lower() == 'true'  # Check if AI Summary is toggled
+    form_type = request.form.get('form_type')
+    generate_summary = request.form.get('ai_summary', 'false').lower() == 'true'
 
     if not file or file.filename == '':
         return render_template('index.html', ai_enabled=openai_key_available, error_message="No selected file")
 
     if allowed_file(file.filename):
-        # Save the uploaded file
         form_folder = get_form_folder(form_type)
         file_path = os.path.join(form_folder, file.filename)
         file.save(file_path)
-
-        # Set file permissions
         os.chmod(file_path, 0o644)
 
-        # Scan the uploaded file with ClamAV, if available
+        # Virus scan
         if not scan_with_clamav(file_path):
             os.remove(file_path)
             return render_template('index.html', ai_enabled=openai_key_available, error_message="File contains a virus or could not be scanned!")
 
-        # Check if the file is a valid PDF
+        # Validate PDF
         if not is_valid_pdf(file_path):
             os.remove(file_path)
             return render_template('index.html', ai_enabled=openai_key_available, error_message="Invalid or corrupted PDF file.")
 
-        # Generate AI summary if toggled
-        if generate_summary:
-            output_txt_file = os.path.join(OUTPUT_FOLDER, f"{os.path.splitext(file.filename)[0]}.txt")
-            # Ensure the text file exists before summarizing
-            if os.path.exists(output_txt_file):
-                summary = generate_ai_summary(output_txt_file)
-                if summary:
-                    # Convert summary to HTML
-                    import markdown
-                    summary_html = markdown.markdown(summary)
-                    logging.info(f"AI Summary Output: {summary_html}")
-                    return render_template(
-                        'index.html',
-                        ai_summary=summary_html,
-                        ai_enabled=openai_key_available,
-                        success_message="AI Summary generated."
-                    )
-                else:
-                    return render_template('index.html', ai_enabled=openai_key_available, error_message="Failed to generate AI Summary.")
-            else:
-                logging.error(f"Text file for summarization not found: {output_txt_file}")
-                return render_template('index.html', ai_enabled=openai_key_available, error_message="Text file not found for summarization.")
-
-        # Output the result file and display success message
+        # The parsed .txt file name
         output_file = f"{os.path.splitext(file.filename)[0]}.txt"
-        success_message = "No viruses found. Parsing PDF..."
-        download_link = url_for('download_file', filename=output_file)
+        parsed_content_path = os.path.join(OUTPUT_FOLDER, output_file)
 
+        # Default summary as empty if not requested
+        summary = ""
+
+        # If AI summary requested and the parsed file exists
+        if generate_summary and os.path.exists(parsed_content_path):
+            summary = generate_ai_summary(parsed_content_path)
+            if summary:
+                import markdown
+                summary_html = markdown.markdown(summary)
+
+                # Read parsed content
+                with open(parsed_content_path, 'r', encoding='utf-8') as f:
+                    parsed_content = f.read()
+
+                # Store content and summary for chatbot
+                file_data[session_id] = {
+                    "parsed_content": parsed_content,
+                    "summary": summary
+                }
+
+                # **Key Addition:**
+                # After generating the summary, ask if the user wants to dive deeper.
+                return render_template(
+                    'index.html',
+                    ai_summary=summary_html,
+                    ai_enabled=openai_key_available,
+                    success_message="AI Summary generated.",
+                    dive_deeper=True
+                )
+            else:
+                return render_template('index.html', ai_enabled=openai_key_available, error_message="Failed to generate AI Summary.")
+
+        elif generate_summary and not os.path.exists(parsed_content_path):
+            # If summary requested but no parsed text file found
+            return render_template('index.html', ai_enabled=openai_key_available, error_message="Text file not found for summarization.")
+
+        # If no AI summary requested, just proceed
+        success_message = "No viruses found. Parsing PDF..."
+
+        # Read parsed content for chatbot (even if no summary)
+        parsed_content = ""
+        if os.path.exists(parsed_content_path):
+            with open(parsed_content_path, 'r', encoding='utf-8') as f:
+                parsed_content = f.read()
+
+        # Store in file_data without summary
+        file_data[session_id] = {
+            "parsed_content": parsed_content,
+            "summary": summary
+        }
+
+        # Ask if user wants to dive deeper into the file if you wish to follow the flow exactly
         return render_template(
             'index.html',
             ai_enabled=openai_key_available,
             success_message=success_message,
             output_file=output_file,
-            download_link=download_link
+            download_link=url_for('download_file', filename=output_file),
+            dive_deeper=True
         )
     else:
         return render_template('index.html', ai_enabled=openai_key_available, error_message="File type not allowed. Only PDF files are accepted.")
@@ -263,41 +294,6 @@ def upload_file():
 @app.route('/download/<filename>')
 def download_file(filename):
     return send_from_directory(OUTPUT_FOLDER, filename, as_attachment=True)
-
-@app.route('/ask', methods=['POST'])
-def ask_question():
-    user_query = request.form.get('user_query', None)
-    if not user_query:
-        return render_template('index.html', error_message="Please enter a question to ask.")
-
-    # Assume the last uploaded file is used
-    uploaded_file_path = os.path.join(OUTPUT_FOLDER, "last_uploaded_file.txt")
-
-    if os.path.exists(uploaded_file_path):
-        with open(uploaded_file_path, 'r', encoding='utf-8') as file:
-            text = file.read()
-
-        try:
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are an AI assistant specializing in accounting document summaries. Provide a concise summary. I specifically want you to give information about each and every section that could initially interest an accountant"},
-                    {"role": "user", "content": f"Please summarize the following document:\n\n{truncated_text}"}
-                ]
-            )
-            answer = response["choices"][0]["message"]["content"].strip()
-
-            return render_template(
-                'index.html',
-                success_message="Here's the response to your question.",
-                ai_summary=answer
-            )
-
-        except Exception as e:
-            logging.error(f"Error answering question: {e}")
-            return render_template('index.html', error_message="An unexpected error occurred while answering your question.")
-    else:
-        return render_template('index.html', error_message="No document available for querying.")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
